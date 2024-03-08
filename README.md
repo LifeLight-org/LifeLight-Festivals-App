@@ -20,6 +20,9 @@ You can verify your installation by running `flutter doctor` in a terminal. This
 1. Clone this repository.
 2. Navigate to the project directory.
 3. Install the dependencies.
+   ```sh
+   flutter pub get
+   ```
 4. Start your emulator or connect your device.
 5. Run the app.
 
