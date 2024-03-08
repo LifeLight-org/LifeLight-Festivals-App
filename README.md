@@ -1,4 +1,4 @@
-# Lifelight App
+# Lifelight Festivals App
 
 This is a Flutter project. To get started, you'll need to install Flutter and set up your development environment.
 
