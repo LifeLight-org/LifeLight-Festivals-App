@@ -40,7 +40,9 @@ class ArtistCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(15.0),
-                child: Image.network(artist.image, // Placeholder image URL
+                child: FadeInImage(
+                  placeholder: const AssetImage('assets/images/Gradient.png'), // Replace with your gradient placeholder image
+                  image: NetworkImage(artist.image),
                   width: double.infinity,
                   height: double.infinity,
                   fit: BoxFit.cover,

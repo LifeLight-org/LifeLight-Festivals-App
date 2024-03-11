@@ -73,14 +73,14 @@ class ArtistLineupPageState extends State<ArtistLineupPage>
     );
   }
 
-  Future<Widget> _buildArtistList(String day) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? selectedFestival = prefs.getString('selectedFestivalDBPrefix');
-    String tableName = '${selectedFestival ?? 'ha'}-artist_lineup';
+Future<Widget> _buildArtistList(String day) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? selectedFestival = prefs.getString('selectedFestivalDBPrefix');
+  String tableName = '${selectedFestival ?? 'ha'}-artist_lineup';
 
-    return FutureBuilder(
-      future: Supabase.instance.client.from(tableName).select().eq('day', day),
-      builder: (context, snapshot) {
+  return FutureBuilder(
+    future: Supabase.instance.client.from(tableName).select().eq('day', day).order('time', ascending: true),
+    builder: (context, snapshot) {
         if (snapshot.hasData) {
           final artists = snapshot.data as List<dynamic>;
           if (artists.isEmpty) {

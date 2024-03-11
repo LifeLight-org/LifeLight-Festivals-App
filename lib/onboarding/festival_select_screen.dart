@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
+
 import '/pages/home.dart';
 
 class FestivalSelectScreen extends StatelessWidget {
@@ -19,6 +21,10 @@ class FestivalSelectScreen extends StatelessWidget {
         prefs.getString('selectedFestival') ?? 'No Festival Selected';
     return festival;
   }
+
+void setUserTag(String tagKey, String tagValue) async {
+  OneSignal.User.addTagWithKey(tagKey, tagValue);
+}
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +51,7 @@ class FestivalSelectScreen extends StatelessWidget {
                 onFestivalSelected: (festivalLogo, festivalDBPrefix) async {
                   await setOnboardingStatus('Sioux Falls Festival',
                       'assets/images/LL-Logo.png', 'SF', true);
+                      setUserTag('festival', 'Souix Falls Festival');
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const HomePage()),
@@ -61,6 +68,7 @@ class FestivalSelectScreen extends StatelessWidget {
                 onFestivalSelected: (festivalLogo, festivalDBPrefix) async {
                   await setOnboardingStatus(
                       'Hills Alive', 'assets/images/HA-Logo.png', 'HA', true);
+                      setUserTag('festival', 'Hills Alive');
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const HomePage()),

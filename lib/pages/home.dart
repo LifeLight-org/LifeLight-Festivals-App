@@ -5,6 +5,8 @@ import '/components/basepage.dart';
 import 'map.dart';
 import 'package:lifelight_app/component-widgets/glassybutton.dart';
 
+import 'package:onesignal_flutter/onesignal_flutter.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -42,6 +44,10 @@ class HomePageState extends State<HomePage> {
 
     yield {'name': festival, 'logo': selectedFestivalLogo};
   }
+
+void removeUserTag(String tagKey) async {
+  OneSignal.User.removeTag(tagKey);
+}
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +109,7 @@ class HomePageState extends State<HomePage> {
                       onPressed: () async {
                         if (mounted) {
                           BuildContext localContext = context;
+                          removeUserTag('festival');
                           Navigator.pushReplacement(
                             // ignore: use_build_context_synchronously
                             localContext,
