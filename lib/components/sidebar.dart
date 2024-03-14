@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lifelight_app/pages/home.dart';
 import 'package:lifelight_app/pages/map.dart';
 import 'package:lifelight_app/pages/artist_lineup.dart';
-import 'package:lifelight_app/pages/meet_and_greet_schedule.dart';
+import 'package:lifelight_app/pages/artist_signing_schedule.dart';
 import 'package:lifelight_app/pages/schedule.dart';
 import 'package:lifelight_app/pages/donate.dart';
 
@@ -80,7 +80,7 @@ class Sidebar extends StatelessWidget {
               onTap: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const MeetAndGreetPage()),
+                  MaterialPageRoute(builder: (context) => const ArtistSigningSchedulePage()),
                 );
               },
             ),

@@ -3,14 +3,14 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '/components/basepage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MeetAndGreetPage extends StatefulWidget {
-  const MeetAndGreetPage({super.key});
+class ArtistSigningSchedulePage extends StatefulWidget {
+  const ArtistSigningSchedulePage({super.key});
 
   @override
-  MeetAndGreetPageState createState() => MeetAndGreetPageState();
+  ArtistSigningSchedulePageState createState() => ArtistSigningSchedulePageState();
 }
 
-class MeetAndGreetPageState extends State<MeetAndGreetPage> {
+class ArtistSigningSchedulePageState extends State<ArtistSigningSchedulePage> {
   List<Artist> artists = [];
 
   @override
