@@ -21,9 +21,11 @@ class MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BasePage(
-      title: 'Map',
-      child: SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Map'),
+      ),
+      body: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: InteractiveViewer(
           minScale: 1.0,

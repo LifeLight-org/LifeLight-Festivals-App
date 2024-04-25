@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:lifelight_app/component-widgets/event_card.dart';
 import 'package:intl/intl.dart';
-import '/components/basepage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SchedulePage extends StatefulWidget {
@@ -42,9 +41,11 @@ class SchedulePageState extends State<SchedulePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BasePage(
-      title: 'Schedule',
-      child: ListView.builder(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Schedule'),
+      ),
+      body: ListView.builder(
         itemCount: scheduleItems.length,
         itemBuilder: (context, index) {
           final scheduleItem = scheduleItems[index];

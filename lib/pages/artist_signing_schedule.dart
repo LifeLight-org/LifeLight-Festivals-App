@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '/components/basepage.dart';
+import 'package:lifelight_app/components/basepage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ArtistSigningSchedulePage extends StatefulWidget {
@@ -33,9 +33,11 @@ class ArtistSigningSchedulePageState extends State<ArtistSigningSchedulePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BasePage(
-      title: 'Meet and Greet Schedule',
-      child: artists.isEmpty
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Signing Schedule'),
+      ),
+      body: artists.isEmpty
           ? const Center(child: Text('Updates to Come'))
           : Scaffold(
               body: DefaultTabController(

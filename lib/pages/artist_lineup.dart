@@ -30,9 +30,11 @@ class ArtistLineupPageState extends State<ArtistLineupPage>
 
   @override
   Widget build(BuildContext context) {
-    return BasePage(
-      title: 'Artist Lineup',
-      child: Column(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Artist Lineup'),
+      ),
+      body: Column(
         children: [
           TabBar(
             controller: _tabController,

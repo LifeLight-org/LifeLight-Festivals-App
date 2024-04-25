@@ -32,6 +32,28 @@
     }
   },
   "applyElevationOverlayColor": false,
+  "bottomNavigationBarTheme": {
+    "selectedLabelStyle": {
+      "color": "#ffffffff",
+      "decoration": "none",
+      "fontFamily": "Roboto",
+      "fontSize": 14,
+      "fontWeight": "w500",
+      "inherit": false,
+      "letterSpacing": 1.25,
+      "textBaseline": "alphabetic"
+    },
+    "unselectedLabelStyle": {
+      "color": "#ffffffff",
+      "decoration": "none",
+      "fontFamily": "Roboto",
+      "fontSize": 14,
+      "fontWeight": "w500",
+      "inherit": false,
+      "letterSpacing": 1.25,
+      "textBaseline": "alphabetic"
+    }
+  },
   "brightness": "dark",
   "buttonTheme": {
     "alignedDropdown": false,
@@ -330,6 +352,9 @@
   "highlightColor": "#40cccccc",
   "hintColor": "#99ffffff",
   "hoverColor": "#0affffff",
+  "iconTheme": {
+    "color": "#ffffffff"
+  },
   "indicatorColor": "#ffffd000",
   "inputDecorationTheme": {
     "alignLabelWithHint": false,
@@ -459,6 +484,28 @@
   "shadowColor": "#ff000000",
   "splashColor": "#40cccccc",
   "splashFactory": "ripple",
+  "tabBarTheme": {
+    "labelStyle": {
+      "color": "#ffffffff",
+      "decoration": "none",
+      "fontFamily": "Roboto",
+      "fontSize": 14,
+      "fontWeight": "w500",
+      "inherit": false,
+      "letterSpacing": 0.1,
+      "textBaseline": "alphabetic"
+    },
+    "unselectedLabelStyle": {
+      "color": "#ffffffff",
+      "decoration": "none",
+      "fontFamily": "Roboto",
+      "fontSize": 14,
+      "fontWeight": "w500",
+      "inherit": false,
+      "letterSpacing": 0.1,
+      "textBaseline": "alphabetic"
+    }
+  },
   "textTheme": {
     "bodyLarge": {
       "color": "#ffffffff",
@@ -507,6 +554,7 @@
         "Raleway"
       ],
       "fontSize": 96,
+      "fontStyle": "normal",
       "fontWeight": "w300",
       "inherit": false,
       "letterSpacing": -1.5,

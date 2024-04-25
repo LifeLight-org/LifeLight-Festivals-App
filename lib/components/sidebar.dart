@@ -6,6 +6,7 @@ import 'package:lifelight_app/pages/artist_lineup.dart';
 import 'package:lifelight_app/pages/artist_signing_schedule.dart';
 import 'package:lifelight_app/pages/schedule.dart';
 import 'package:lifelight_app/pages/donate.dart';
+import 'package:lifelight_app/pages/sponsors.dart';
 
 import 'package:lifelight_app/component-widgets/list_title.dart';
 
@@ -71,7 +72,8 @@ class Sidebar extends StatelessWidget {
               onTap: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const ArtistLineupPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const ArtistLineupPage()),
                 );
               },
             ),
@@ -80,7 +82,8 @@ class Sidebar extends StatelessWidget {
               onTap: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const ArtistSigningSchedulePage()),
+                  MaterialPageRoute(
+                      builder: (context) => const ArtistSigningSchedulePage()),
                 );
               },
             ),
@@ -93,7 +96,16 @@ class Sidebar extends StatelessWidget {
                 );
               },
             ),
-                        SideBarListTile(
+            SideBarListTile(
+              title: 'Sponsors',
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => SponsorPage()),
+                );
+              },
+            ),
+            SideBarListTile(
               title: 'Donate',
               onTap: () {
                 Navigator.pushReplacement(

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
-import '/pages/home.dart';
+import 'package:lifelight_app/pages/home.dart';
 
 class FestivalSelectScreen extends StatelessWidget {
   const FestivalSelectScreen({super.key});
@@ -22,9 +22,13 @@ class FestivalSelectScreen extends StatelessWidget {
     return festival;
   }
 
-void setUserTag(String tagKey, String tagValue) async {
-  OneSignal.User.addTagWithKey(tagKey, tagValue);
-}
+  void setUserTag(String tagKey, String tagValue) async {
+    OneSignal.User.addTagWithKey(tagKey, tagValue);
+  }
+
+  void removeUserTag(String tagKey) async {
+    OneSignal.User.removeTag(tagKey);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,12 +53,13 @@ void setUserTag(String tagKey, String tagValue) async {
                 festivalLogo: 'assets/images/LL-Logo.png',
                 festivalDBPrefix: 'SF',
                 onFestivalSelected: (festivalLogo, festivalDBPrefix) async {
-                  await setOnboardingStatus('Sioux Falls Festival',
+                  removeUserTag('festival');
+                  await setOnboardingStatus('LifeLight Festival',
                       'assets/images/LL-Logo.png', 'SF', true);
-                      setUserTag('festival', 'Souix Falls Festival');
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const HomePage()),
+                  setUserTag('festival', 'Souix Falls Festival');
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                    (Route<dynamic> route) => false,
                   );
                 },
               ),
@@ -66,12 +71,13 @@ void setUserTag(String tagKey, String tagValue) async {
                 festivalLogo: 'assets/images/HA-Logo.png',
                 festivalDBPrefix: 'HA',
                 onFestivalSelected: (festivalLogo, festivalDBPrefix) async {
+                  removeUserTag('festival');
                   await setOnboardingStatus(
                       'Hills Alive', 'assets/images/HA-Logo.png', 'HA', true);
-                      setUserTag('festival', 'Hills Alive');
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const HomePage()),
+                  setUserTag('festival', 'Hills Alive');
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                    (Route<dynamic> route) => false,
                   );
                 },
               ),
