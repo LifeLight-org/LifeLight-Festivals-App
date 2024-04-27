@@ -49,7 +49,7 @@ class FestivalSelectScreen extends StatelessWidget {
             SizedBox(
               width: 350, // Set a larger width for the cards
               child: FestivalCard(
-                festivalName: 'Sioux Falls Festival',
+                festivalName: 'LifeLight Festival',
                 festivalLogo: 'assets/images/LL-Logo.png',
                 festivalDBPrefix: 'SF',
                 onFestivalSelected: (festivalLogo, festivalDBPrefix) async {
@@ -68,12 +68,12 @@ class FestivalSelectScreen extends StatelessWidget {
               width: 350, // Set a larger width for the cards
               child: FestivalCard(
                 festivalName: 'LifeLight Hills Alive',
-                festivalLogo: 'assets/images/HA-Logo.png',
+                festivalLogo: 'assets/images/HA-Logo-W.png',
                 festivalDBPrefix: 'HA',
                 onFestivalSelected: (festivalLogo, festivalDBPrefix) async {
                   removeUserTag('festival');
                   await setOnboardingStatus(
-                      'Hills Alive', 'assets/images/HA-Logo.png', 'HA', true);
+                      'Hills Alive', 'assets/images/HA-Logo-B.png', 'HA', true);
                   setUserTag('festival', 'Hills Alive');
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => HomePage()),

@@ -8,6 +8,7 @@ import 'package:flutter/services.dart'; // For rootBundle
 import 'dart:convert'; // For jsonDecode
 import 'package:json_theme/json_theme.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:uuid/uuid.dart';
 
 void main() async {
   await dotenv.load();
@@ -19,13 +20,20 @@ void main() async {
 
   OneSignal.Notifications.requestPermission(true);
 
-await Supabase.initialize(
-  url: dotenv.env['SUPABASE_URL']!,
-  anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
-);
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+  );
 
   final sharedPreferences = await SharedPreferences.getInstance();
   final hasOnboarded = sharedPreferences.getBool('onboarding') ?? false;
+
+  // Load or generate UUID
+  String? uuid = sharedPreferences.getString('uuid');
+  if (uuid == null) {
+    uuid = Uuid().v4();
+    await sharedPreferences.setString('uuid', uuid);
+  }
 
   final themeStr = await rootBundle.loadString('assets/theme.json');
   final themeJson = jsonDecode(themeStr);

@@ -21,6 +21,10 @@ dependencies:
   webview_flutter: ^4.7.0
   flutter_inappwebview: ^6.0.0
   flutter_dotenv: ^5.1.0
+  uuid: ^3.0.5
+  random_string: ^2.1.0
+  flutter_nfc_kit: ^3.3.3
+  ndef: ^0.3.1
 
 dev_dependencies:
   flutter_test:
@@ -39,3 +43,6 @@ flutter:
         - asset: assets/fonts/Raleway-ExtraBold.ttf
         - asset: assets/fonts/Raleway-ExtraBoldItalic.ttf
           style: italic
+    - family: HelveticaNeueLT
+      fonts:
+        - asset: assets/fonts/HelveticaNeueLTStd93BlackOblique.otf

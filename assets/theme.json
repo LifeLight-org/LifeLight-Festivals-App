@@ -168,7 +168,7 @@
     "tertiary": "#ff03dac6",
     "tertiaryContainer": "#ff03dac6"
   },
-  "dialogBackgroundColor": "#ff1c1b1f",
+  "dialogBackgroundColor": "#2c2c2c",
   "disabledColor": "#62ffffff",
   "dividerColor": "#ff938f99",
   "elevatedButtonTheme": {
@@ -479,7 +479,7 @@
       "inherit": true
     }
   },
-  "scaffoldBackgroundColor": "#ff1d1d1d",
+  "scaffoldBackgroundColor": "#1b1b1b",
   "secondaryHeaderColor": "#ff534600",
   "shadowColor": "#ff000000",
   "splashColor": "#40cccccc",

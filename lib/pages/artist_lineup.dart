@@ -1,9 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:lifelight_app/component-widgets/artist_card.dart';
-import 'package:lifelight_app/components/basepage.dart';
-import 'package:lifelight_app/component-widgets/artist_popup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lifelight_app/component-widgets/artist_card.dart';
+import 'package:intl/intl.dart';
+
+class Artist {
+  final String name;
+  final String date;
+  final String location;
+  final String time;
+  final String image;
+
+  Artist(
+      {required this.name,
+      required this.date,
+      required this.time,
+      required this.location,
+      required this.image});
+
+  factory Artist.fromJson(Map<String, dynamic> json) {
+    var inputFormat = DateFormat('HH:mm:ss');
+    var outputFormat = DateFormat('h:mm a');
+    var time = outputFormat.format(inputFormat.parse(json['time']));
+
+    return Artist(
+      name: json['name'],
+      date: json['day'],
+      time: time,
+      location: json['stage'],
+      image: json['image'],
+    );
+  }
+}
+
+Future<List<Artist>> fetchArtists() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? selectedFestival = prefs.getString('selectedFestivalDBPrefix');
+  String tableName = "${selectedFestival ?? 'ha'}-artist_lineup";
+  final response = await Supabase.instance.client.from(tableName).select('*');
+
+  return (response as List).map((item) => Artist.fromJson(item)).toList();
+}
 
 class ArtistLineupPage extends StatefulWidget {
   const ArtistLineupPage({super.key});
@@ -13,132 +50,161 @@ class ArtistLineupPage extends StatefulWidget {
 }
 
 class ArtistLineupPageState extends State<ArtistLineupPage>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+    with TickerProviderStateMixin {
+  late TabController _dateController = TabController(length: 0, vsync: this);
+  final Map<String, TabController> _locationControllers = {};
+  List<Artist> _artists = [];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    fetchArtists().then((artists) {
+      setState(() {
+        _artists = artists;
+        _dateController =
+            TabController(length: _getUniqueDates().length, vsync: this);
+        _getUniqueDates().forEach((date) {
+          _locationControllers[date] = TabController(
+              length: _getUniqueLocationsForDate(date).length, vsync: this);
+        });
+      });
+    });
+  }
+
+  String formatDate(String date) {
+    var inputFormat = DateFormat('yyyy-MM-dd');
+    var inputDate = inputFormat.parse(date);
+
+    var outputFormat = DateFormat('EEEE');
+    var outputDate = outputFormat.format(inputDate);
+
+    return outputDate;
+  }
+
+  List<String> _getUniqueDates() {
+    return _artists.map((artist) => artist.date).toSet().toList();
+  }
+
+  List<String> _getUniqueLocationsForDate(String date) {
+    return _artists
+        .where((artist) => artist.date == date)
+        .map((artist) => artist.location)
+        .toSet()
+        .toList();
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _dateController.dispose();
+    for (var controller in _locationControllers.values) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    var uniqueDates = _getUniqueDates();
     return Scaffold(
       appBar: AppBar(
-        title: Text('Artist Lineup'),
+        bottom: _buildTabBar(uniqueDates, _dateController, formatDate),
       ),
-      body: Column(
-        children: [
-          TabBar(
-            controller: _tabController,
-            tabs: const [
-              Tab(text: 'Saturday'),
-              Tab(text: 'Sunday'),
-            ],
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                FutureBuilder<Widget>(
-                  future: _buildArtistList('2024-07-20'),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return snapshot.data!;
-                    } else {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                  },
-                ),
-                FutureBuilder<Widget>(
-                  future: _buildArtistList('2024-07-21'),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return snapshot.data!;
-                    } else {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                  },
-                ),
-              ],
+      body: _buildBody(uniqueDates),
+    );
+  }
+
+  Widget _buildBody(List<String> uniqueDates) {
+    return uniqueDates.length > 1
+        ? _buildTabBarView(uniqueDates)
+        : _buildSingleDateView(uniqueDates);
+  }
+
+  Widget _buildSingleDateView(List<String> uniqueDates) {
+    if (uniqueDates.isEmpty) {
+      return Container(); // return an empty Container or some other widget
+    }
+    var date = uniqueDates[0];
+    var locationsForDate = _getUniqueLocationsForDate(date);
+    return _buildListView(locationsForDate, date); // use locationsForDate
+  }
+
+  Widget _buildListView(List<String> locationsForDate, String date) {
+    if (locationsForDate.isEmpty) {
+      return Container(); // return an empty Container or some other widget
+    }
+    return locationsForDate.length > 1
+        ? TabBarView(
+            controller: _locationControllers[date], // Add this line
+            children: locationsForDate
+                .map((location) => _buildArtistList(date, location))
+                .toList(),
+          )
+        : _buildArtistList(date, locationsForDate[0]);
+  }
+
+  PreferredSizeWidget? _buildTabBar(List<String> items,
+      TabController controller, String Function(String) format) {
+    return items.length > 1
+        ? PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight),
+            child: TabBar(
+              controller: controller,
+              tabs: items.map((item) => Tab(text: format(item))).toList(),
             ),
-          ),
-        ],
+          )
+        : const PreferredSize(
+            preferredSize: Size.zero, child: SizedBox.shrink());
+  }
+
+  Widget _buildTabBarView(List<String> uniqueDates) {
+    return TabBarView(
+      controller: _dateController,
+      children: uniqueDates.map((date) {
+        var locationsForDate = _getUniqueLocationsForDate(date);
+        return Column(
+          children: [
+            _buildTabBar(locationsForDate, _locationControllers[date]!,
+                    (item) => item) ??
+                const SizedBox.shrink(),
+            Expanded(
+              child: _buildListView(locationsForDate, date),
+            ),
+          ],
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildArtistList(String date, String location) {
+    return RefreshIndicator(
+      onRefresh: () async {
+        await fetchArtists().then((artists) {
+          setState(() {
+            _artists = artists;
+            _dateController =
+                TabController(length: _getUniqueDates().length, vsync: this);
+            _getUniqueDates().forEach((date) {
+              _locationControllers[date] = TabController(
+                  length: _getUniqueLocationsForDate(date).length, vsync: this);
+            });
+          });
+        });
+      },
+      child: ListView(
+        children: _artists
+            .where(
+                (artist) => artist.date == date && artist.location == location)
+            .map((artist) => _buildArtistCard(artist))
+            .toList(),
       ),
     );
   }
 
-Future<Widget> _buildArtistList(String day) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? selectedFestival = prefs.getString('selectedFestivalDBPrefix');
-  String tableName = '${selectedFestival ?? 'ha'}-artist_lineup';
-
-  return FutureBuilder(
-    future: Supabase.instance.client.from(tableName).select().eq('day', day).order('time', ascending: true),
-    builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final artists = snapshot.data as List<dynamic>;
-          if (artists.isEmpty) {
-            return const Center(child: Text('Updates to Come'));
-          } else {
-            return ListView.builder(
-              itemCount: artists.length,
-              itemBuilder: (context, index) {
-                final artist = artists[index];
-
-                final timeParts = artist['time']
-                    .split(RegExp('[-:]'))
-                    .map(int.parse)
-                    .toList();
-                final timeOfDay =
-                    TimeOfDay(hour: timeParts[0], minute: timeParts[1]);
-                final formattedTime = timeOfDay.format(context);
-
-                return ArtistCard(
-                  artist: Artist(
-                    name: artist['name'],
-                    image: artist['image'],
-                    day: artist['day'],
-                    time: formattedTime,
-                    stage: artist['stage'],
-                    link: artist['link'],
-                  ),
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return ArtistPopup(
-                          artistName: artist['name'],
-                          playtime: formattedTime,
-                          imageUrl: artist['image'],
-                          aboutText: (artist['about'] == null ||
-                                  artist['about'].isEmpty)
-                              ? 'No information available'
-                              : artist['about'],
-                        );
-                      },
-                    );
-                  },
-                );
-              },
-            );
-          }
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text('Error: ${snapshot.error}'),
-          );
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+  Widget _buildArtistCard(Artist artist) {
+    return ArtistCard(
+      artist: artist, // Pass the artist instance, not the type
+      onTap: () {
+        // Handle tap event here
       },
     );
   }

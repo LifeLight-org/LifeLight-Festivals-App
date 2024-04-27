@@ -1,28 +1,12 @@
 import 'package:flutter/material.dart';
-
-class Artist {
-  final String name;
-  final String image;
-  final String day;
-  final String time;
-  final String stage;
-  final String link;
-
-  Artist({
-    required this.name,
-    required this.image,
-    required this.day,
-    required this.time,
-    required this.stage,
-    required this.link,
-  });
-}
+import 'package:lifelight_app/pages/artist_lineup.dart';
 
 class ArtistCard extends StatelessWidget {
   final Artist artist;
   final VoidCallback onTap;
 
-  const ArtistCard({super.key, required this.artist, required this.onTap});
+  const ArtistCard({Key? key, required this.artist, required this.onTap})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,25 +18,30 @@ class ArtistCard extends StatelessWidget {
         child: Card(
           elevation: 5,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
+            borderRadius: BorderRadius.circular(5.0),
           ),
           child: Stack(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(15.0),
+                borderRadius: BorderRadius.circular(5.0),
                 child: FadeInImage(
-                  placeholder: const AssetImage('assets/images/Gradient.png'), // Replace with your gradient placeholder image
+                  placeholder: const AssetImage(
+                      'assets/images/background.jpg'), // Replace with your gradient placeholder image
                   image: NetworkImage(artist.image),
                   width: double.infinity,
                   height: double.infinity,
                   fit: BoxFit.cover,
+                  imageErrorBuilder: (context, error, stackTrace) {
+                    return Image.asset('assets/images/background.jpg',
+                        fit: BoxFit.cover);
+                  },
                 ),
               ),
               Container(
                 width: double.infinity,
                 height: double.infinity,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.0),
+                  borderRadius: BorderRadius.circular(5.0),
                   gradient: const LinearGradient(
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
@@ -75,12 +64,18 @@ class ArtistCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 5),
-                    Text(
-                      artist.time,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
+                    Row(
+                      children: [
+                        Icon(Icons.access_time, color: Colors.white),
+                        SizedBox(width: 5),
+                        Text(
+                          artist.time == '12:00 AM' ? 'TBD' : artist.time,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
