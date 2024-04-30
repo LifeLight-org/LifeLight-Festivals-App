@@ -5,25 +5,37 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SchedulePage extends StatefulWidget {
-  const SchedulePage({super.key});
+  SchedulePage({Key? key}) : super(key: key);
 
   @override
   SchedulePageState createState() => SchedulePageState();
 }
 
 class SchedulePageState extends State<SchedulePage> {
+  late SharedPreferences prefs;
+  late String selectedFestival;
   List<ScheduleItem> scheduleItems = [];
+  final timeFormat = DateFormat('HH:mm:ss');
+  final displayFormat = DateFormat('h:mm a');
 
   @override
   void initState() {
     super.initState();
+    initialize();
+  }
+
+  Future<void> initialize() async {
+    await initPrefs();
     fetchScheduleItems();
   }
 
+  Future<void> initPrefs() async {
+    prefs = await SharedPreferences.getInstance();
+    selectedFestival = prefs.getString('selectedFestivalDBPrefix') ?? 'ha';
+  }
+
   Future<void> fetchScheduleItems() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? selectedFestival = prefs.getString('selectedFestivalDBPrefix');
-    String tableName = "${selectedFestival ?? 'ha'}-schedule";
+    String tableName = "$selectedFestival-schedule";
 
     final response = await Supabase.instance.client.from(tableName).select('*');
 
@@ -31,8 +43,9 @@ class SchedulePageState extends State<SchedulePage> {
       throw Exception('No artists found');
     }
 
-    List<ScheduleItem> items = await Future.wait(
-        response.map((item) => ScheduleItem.fromJson(item)).toList());
+    List<ScheduleItem> items = await Future.wait(response
+        .map((item) => ScheduleItem.fromJson(item, timeFormat, displayFormat))
+        .toList());
 
     setState(() {
       scheduleItems = items;
@@ -43,7 +56,7 @@ class SchedulePageState extends State<SchedulePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Schedule'),
+        title: const Text('Schedule'),
       ),
       body: ListView.builder(
         itemCount: scheduleItems.length,
@@ -77,10 +90,8 @@ class ScheduleItem {
     required this.imageUrl,
   });
 
-  static Future<ScheduleItem> fromJson(Map<String, dynamic> json) async {
-    final timeFormat = DateFormat('HH:mm:ss');
-    final displayFormat = DateFormat('h:mm a');
-
+  static Future<ScheduleItem> fromJson(Map<String, dynamic> json,
+      DateFormat timeFormat, DateFormat displayFormat) async {
     final time = timeFormat.parse(json['time'], true);
     final formattedTime = displayFormat.format(time);
 

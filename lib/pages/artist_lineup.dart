@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lifelight_app/component-widgets/artist_card.dart';
 import 'package:intl/intl.dart';
+import 'package:lifelight_app/component-widgets/artist_popup.dart';
 
 class Artist {
   final String name;
@@ -10,27 +11,39 @@ class Artist {
   final String location;
   final String time;
   final String image;
+  final String? bio;
 
   Artist(
       {required this.name,
       required this.date,
       required this.time,
       required this.location,
-      required this.image});
+      required this.image,
+      this.bio});
 
-  factory Artist.fromJson(Map<String, dynamic> json) {
-    var inputFormat = DateFormat('HH:mm:ss');
-    var outputFormat = DateFormat('h:mm a');
-    var time = outputFormat.format(inputFormat.parse(json['time']));
+factory Artist.fromJson(Map<String, dynamic> json) {
+  var inputFormat = DateFormat('HH:mm:ss');
+  var outputFormat = DateFormat('h:mm a');
+  var time = outputFormat.format(inputFormat.parse(json['time']));
 
-    return Artist(
-      name: json['name'],
-      date: json['day'],
-      time: time,
-      location: json['stage'],
-      image: json['image'],
-    );
+  if (time == '12:00 AM') {
+    time = 'TBD';
   }
+
+  String bio = json['about'];
+  if (bio == null || bio.trim().isEmpty) {
+    bio = 'Bio Coming Soon!';
+  }
+
+  return Artist(
+    name: json['name'],
+    date: json['day'],
+    time: time,
+    location: json['stage'],
+    image: json['image'],
+    bio: bio,
+  );
+}
 }
 
 Future<List<Artist>> fetchArtists() async {
@@ -202,9 +215,20 @@ class ArtistLineupPageState extends State<ArtistLineupPage>
 
   Widget _buildArtistCard(Artist artist) {
     return ArtistCard(
-      artist: artist, // Pass the artist instance, not the type
+      artist: artist,
       onTap: () {
-        // Handle tap event here
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return ArtistPopup(
+              artistName: artist.name,
+              stage: artist.location,
+              playtime: artist.time,
+              imageUrl: artist.image,
+              aboutText: artist.bio ?? 'Coming Soon!',
+            );
+          },
+        );
       },
     );
   }

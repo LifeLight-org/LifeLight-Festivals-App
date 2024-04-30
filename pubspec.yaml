@@ -38,9 +38,9 @@ flutter:
     - assets/theme.json
     - .env
   fonts:
-    - family: Raleway_regular
+    - family: Raleway
       fonts:
-        - asset: assets/fonts/Raleway-ExtraBold.ttf
+        - asset: assets/fonts/Raleway-Black.ttf
         - asset: assets/fonts/Raleway-ExtraBoldItalic.ttf
           style: italic
     - family: HelveticaNeueLT

@@ -7,7 +7,7 @@
     "titleTextStyle": {
       "color": "#ffffffff",
       "decoration": "none",
-      "fontFamily": "Raleway_regular",
+      "fontFamily": "Raleway",
       "fontFamilyFallback": [
         "Raleway"
       ],
@@ -20,7 +20,7 @@
     "toolbarTextStyle": {
       "color": "#ffffffff",
       "decoration": "none",
-      "fontFamily": "Raleway_regular",
+      "fontFamily": "Raleway",
       "fontFamilyFallback": [
         "Raleway"
       ],
@@ -510,7 +510,7 @@
     "bodyLarge": {
       "color": "#ffffffff",
       "decoration": "none",
-      "fontFamily": "Raleway_regular",
+      "fontFamily": "Raleway",
       "fontFamilyFallback": [
         "Raleway"
       ],
@@ -523,7 +523,7 @@
     "bodyMedium": {
       "color": "#ffffffff",
       "decoration": "none",
-      "fontFamily": "Raleway_regular",
+      "fontFamily": "Raleway",
       "fontFamilyFallback": [
         "Raleway"
       ],
@@ -536,7 +536,7 @@
     "bodySmall": {
       "color": "#b3ffffff",
       "decoration": "none",
-      "fontFamily": "Raleway_regular",
+      "fontFamily": "Raleway",
       "fontFamilyFallback": [
         "Raleway"
       ],
@@ -576,7 +576,7 @@
     "displaySmall": {
       "color": "#b3ffffff",
       "decoration": "none",
-      "fontFamily": "Raleway_regular",
+      "fontFamily": "Raleway",
       "fontFamilyFallback": [
         "Raleway"
       ],
@@ -589,7 +589,7 @@
     "headlineLarge": {
       "color": "#b3ffffff",
       "decoration": "none",
-      "fontFamily": "Raleway_regular",
+      "fontFamily": "Raleway",
       "fontFamilyFallback": [
         "Raleway"
       ],
@@ -602,7 +602,7 @@
     "headlineMedium": {
       "color": "#b3ffffff",
       "decoration": "none",
-      "fontFamily": "Raleway_regular",
+      "fontFamily": "Raleway",
       "fontFamilyFallback": [
         "Raleway"
       ],
@@ -615,7 +615,7 @@
     "headlineSmall": {
       "color": "#ffffffff",
       "decoration": "none",
-      "fontFamily": "Raleway_regular",
+      "fontFamily": "Raleway",
       "fontFamilyFallback": [
         "Raleway"
       ],
@@ -641,7 +641,7 @@
     "labelMedium": {
       "color": "#ffffffff",
       "decoration": "none",
-      "fontFamily": "Raleway_regular",
+      "fontFamily": "Raleway",
       "fontFamilyFallback": [
         "Raleway"
       ],
@@ -654,7 +654,7 @@
     "labelSmall": {
       "color": "#ffffffff",
       "decoration": "none",
-      "fontFamily": "Raleway_regular",
+      "fontFamily": "Raleway",
       "fontFamilyFallback": [
         "Raleway"
       ],
@@ -680,7 +680,7 @@
     "titleMedium": {
       "color": "#ffffffff",
       "decoration": "none",
-      "fontFamily": "Raleway_regular",
+      "fontFamily": "Raleway",
       "fontFamilyFallback": [
         "Raleway"
       ],

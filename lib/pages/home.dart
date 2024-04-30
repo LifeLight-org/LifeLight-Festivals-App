@@ -10,6 +10,7 @@ import 'package:lifelight_app/pages/settings.dart';
 import 'package:lifelight_app/pages/sponsors.dart';
 import 'package:lifelight_app/pages/faqpage.dart';
 import 'package:lifelight_app/pages/resourcespage.dart';
+import 'package:lifelight_app/component-widgets/iconbutton.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -70,33 +71,34 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor:
-            Colors.transparent, // Set AppBar background to transparent
-        elevation: 0, // Remove shadow
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SettingsPage()),
-              );
-            },
-          ),
-        ],
-      ),
-      body: Container(
+    return Stack(children: [
+      Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(
-                "assets/images/background.jpg"), // Replace with your image path
+            image: AssetImage("assets/images/background.jpg"),
             fit: BoxFit.cover,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.only(top: 16.0), // Add padding to the top
+      ),
+      Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingsPage()),
+                );
+              },
+            ),
+          ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.only(top: 16.0),
           child: StreamBuilder<Map<String, String>>(
             stream: getFestival(),
             builder: (BuildContext context,
@@ -117,25 +119,21 @@ class HomePageState extends State<HomePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       if (snapshot.data!['logo']!.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              top: 60.0), // Add padding to the top
-                          child: Hero(
-                            tag: 'eventLogo',
-                            child: Image.asset(
-                              snapshot.data!['logo']!,
-                              height: 120, // Adjust the height as needed
-                              width: double.infinity,
-                              fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Image.asset(
-                                  'assets/images/LL-Logo.png', // path to your default logo
-                                  height: 150,
-                                  width: double.infinity,
-                                  fit: BoxFit.contain,
-                                );
-                              },
-                            ),
+                        Hero(
+                          tag: 'eventLogo',
+                          child: Image.asset(
+                            snapshot.data!['logo']!,
+                            height: 120, // Adjust the height as needed
+                            width: double.infinity,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                'assets/images/LL-Logo.png', // path to your default logo
+                                height: 150,
+                                width: double.infinity,
+                                fit: BoxFit.contain,
+                              );
+                            },
                           ),
                         ),
                       Padding(
@@ -169,75 +167,11 @@ class HomePageState extends State<HomePage> {
                           mainAxisSpacing: 0.0,
                           crossAxisSpacing: 30.0,
                           children: <Widget>[
-                            for (var i = 0; i < buttons.length; i++)
-                              Stack(
-                                alignment: Alignment.center,
-                                children: <Widget>[
-                                  Container(
-                                    height: 70.0, // adjust the height as needed
-                                    width: 70.0, // adjust the width as needed
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(
-                                          5), // add this line
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 70.0, // adjust the height as needed
-                                    width: 70.0, // adjust the width as needed
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          5), // add this line
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            'assets/images/Lights.png'), // path to your image
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                  ),
-                                  ElevatedButton(
-                                    style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.transparent),
-                                      elevation: MaterialStateProperty.all(0),
-                                      shape: MaterialStateProperty.all(
-                                          RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            5), // add this line
-                                      )),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                buttons[i]['page']),
-                                      );
-                                    },
-                                    child: Icon(
-                                      buttons[i]['icon'],
-                                      size: 50.0,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  Positioned(
-                                    bottom: 0,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          top:
-                                              5.0), // adjust the padding as needed
-                                      child: Text(
-                                        buttons[i]['text'],
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 24.0,
-                                          fontWeight: FontWeight.w900,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                            for (var button in buttons)
+                              IconButtonCard(
+                                icon: button['icon'],
+                                text: button['text'],
+                                page: button['page'],
                               ),
                           ],
                         ),
@@ -250,6 +184,6 @@ class HomePageState extends State<HomePage> {
           ),
         ),
       ),
-    );
+    ]);
   }
 }

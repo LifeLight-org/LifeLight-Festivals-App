@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
-import 'package:lifelight_app/components/basepage.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});

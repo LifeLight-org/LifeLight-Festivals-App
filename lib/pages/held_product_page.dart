@@ -28,13 +28,9 @@ class _HeldProductsPageState extends State<HeldProductsPage> {
         .select()
         .eq('uuid', deviceUUID);
 
-    if (response == null) {
-      print('Error fetching held products: ${response}');
-    } else {
       setState(() {
         heldProducts = response as List<dynamic>;
-      });
-    }
+    });
   }
 
 @override
