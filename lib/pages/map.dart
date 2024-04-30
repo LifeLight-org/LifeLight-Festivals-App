@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:location/location.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -10,7 +9,6 @@ class MapPage extends StatefulWidget {
 
 class MapPageState extends State<MapPage> {
   final TransformationController _controller = TransformationController();
-  final Location location = Location();
 
   @override
   void initState() {

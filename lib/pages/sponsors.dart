@@ -43,42 +43,71 @@ class SponsorPageState extends State<SponsorPage> {
       appBar: AppBar(
         title: Text('Sponsors'),
       ),
-      body: ListView.builder(
-        itemCount: sponsors.length,
-        itemBuilder: (context, index) {
-          final sponsor = sponsors[index];
-          return ListTile(
-            leading: SizedBox.shrink(), // Empty leading widget
-            title: Center(
-              child: Image.network(
-                sponsor.logo,
-                width: 130, // You can adjust the size as needed
-                height: 130, // You can adjust the size as needed
-                fit: BoxFit.contain,
-              ),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Scaffold(
-                    body: GestureDetector(
-                      child: Center(
-                        child: Hero(
-                          tag: 'imageHero',
-                          child: Image.network(sponsor.advert),
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: sponsors.length,
+              itemBuilder: (context, index) {
+                final sponsor = sponsors[index];
+                return ListTile(
+                  leading: SizedBox.shrink(), // Empty leading widget
+                  title: Center(
+                    child: Image.network(
+                      sponsor.logo,
+                      width: 130, // You can adjust the size as needed
+                      height: 130, // You can adjust the size as needed
+                      fit: BoxFit.contain,
                     ),
                   ),
-                ),
-              );
-            },
-          );
-        },
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Scaffold(
+                          body: GestureDetector(
+                            child: Stack(
+                              children: [
+                                Center(
+                                  child: Hero(
+                                    tag: 'imageHero',
+                                    child: Image.network(sponsor.advert),
+                                  ),
+                                ),
+                                Positioned(
+                                  right: 10,
+                                  top: 55,
+                                  child: IconButton(
+                                    icon: Icon(Icons.close),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "Click on the sponsor's logo to learn more about them.",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
       ),
     );
   }

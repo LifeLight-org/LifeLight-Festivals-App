@@ -25,6 +25,10 @@ void main() async {
     anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
 
+  final themeStr = await rootBundle.loadString('assets/theme.json');
+  final themeJson = jsonDecode(themeStr);
+  final theme = ThemeDecoder.decodeThemeData(themeJson)!;
+
   final sharedPreferences = await SharedPreferences.getInstance();
   final hasOnboarded = sharedPreferences.getBool('onboarding') ?? false;
 
@@ -35,13 +39,12 @@ void main() async {
     await sharedPreferences.setString('uuid', uuid);
   }
 
-  final themeStr = await rootBundle.loadString('assets/theme.json');
-  final themeJson = jsonDecode(themeStr);
-  final theme = ThemeDecoder.decodeThemeData(themeJson)!;
-
-  runApp(MyApp(
-      theme: theme,
-      hasOnboarded: hasOnboarded));
+  runApp(
+      MyApp(
+        theme: theme,
+        hasOnboarded: hasOnboarded,
+      ),
+  );
 }
 
 class MyApp extends StatelessWidget {
