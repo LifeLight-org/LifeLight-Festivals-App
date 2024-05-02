@@ -9,6 +9,10 @@ import 'dart:convert'; // For jsonDecode
 import 'package:json_theme/json_theme.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:uuid/uuid.dart';
+import 'package:provider/provider.dart';
+import 'package:lifelight_app/models/cart.dart';
+import 'package:overlay_support/overlay_support.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 void main() async {
   await dotenv.load();
@@ -35,15 +39,20 @@ void main() async {
   // Load or generate UUID
   String? uuid = sharedPreferences.getString('uuid');
   if (uuid == null) {
-    uuid = Uuid().v4();
+    uuid = const Uuid().v4();
     await sharedPreferences.setString('uuid', uuid);
   }
 
   runApp(
-      MyApp(
-        theme: theme,
-        hasOnboarded: hasOnboarded,
+    OverlaySupport(
+      child: ChangeNotifierProvider(
+        create: (context) => Cart(),
+        child: MyApp(
+          theme: theme,
+          hasOnboarded: hasOnboarded,
+        ),
       ),
+    ),
   );
 }
 
@@ -51,7 +60,7 @@ class MyApp extends StatelessWidget {
   final ThemeData theme;
   final bool hasOnboarded;
 
-  const MyApp({super.key, required this.theme, required this.hasOnboarded});
+  const MyApp({Key? key, required this.theme, required this.hasOnboarded}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +75,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: theme,
       home: initialScreen,
+      builder: EasyLoading.init(),
     );
   }
 }
