@@ -97,9 +97,7 @@ class HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.only(top: 16.0),
-          child: StreamBuilder<Map<String, String>>(
+        body: StreamBuilder<Map<String, String>>(
             stream: getFestival(),
             builder: (BuildContext context,
                 AsyncSnapshot<Map<String, String>> snapshot) {
@@ -138,7 +136,7 @@ class HomePageState extends State<HomePage> {
                         ),
                       Padding(
                         padding:
-                            const EdgeInsets.only(top: 10.0), // Add top padding
+                            const EdgeInsets.only(top: 7.0), // Add top padding
                         child: Text(
                           'BRINGING LIGHT INTO DARKNESS',
                           style: TextStyle(
@@ -165,7 +163,7 @@ class HomePageState extends State<HomePage> {
                           padding: const EdgeInsets.only(
                               top: 0.0, left: 40.0, right: 40.0),
                           mainAxisSpacing: 0.0,
-                          crossAxisSpacing: 30.0,
+                          crossAxisSpacing: 40.0,
                           children: <Widget>[
                             for (var button in buttons)
                               IconButtonCard(
@@ -182,7 +180,6 @@ class HomePageState extends State<HomePage> {
               }
             },
           ),
-        ),
       ),
     ]);
   }
