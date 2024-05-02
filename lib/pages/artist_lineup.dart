@@ -30,10 +30,7 @@ factory Artist.fromJson(Map<String, dynamic> json) {
     time = 'TBD';
   }
 
-  String bio = json['about'];
-  if (bio == null || bio.trim().isEmpty) {
-    bio = 'Bio Coming Soon!';
-  }
+  String bio = json['about'] ?? 'Bio Coming Soon!';
 
   return Artist(
     name: json['name'],
