@@ -40,53 +40,38 @@ class EventCard extends StatelessWidget {
               Container(
                 width: double.infinity, // Full width
                 height: 90.0, // Same height as the image
-                color: Colors.black.withOpacity(0.5), // Semi-transparent overlay
+                color:
+                    Colors.black.withOpacity(0.5), // Semi-transparent overlay
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            fontSize: 25.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white, // Ensure text visibility
-                          ),
-                        ),
-                        const Spacer(),
-                        const Icon(Icons.access_time,
-                            size: 16.0, color: Colors.white),
-                        const SizedBox(width: 8.0),
-                        Text(
-                          time,
-                          style: const TextStyle(
-                            fontSize: 14.0,
-                            color: Colors.white, // Ensure text visibility
-                          ),
-                        ),
-                      ],
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 25.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white, // Ensure text visibility
+                      ),
                     ),
                     const SizedBox(height: 8.0),
-                    Row(
-                      children: [
-                        const Spacer(),
-                        if (location.isNotEmpty)
-                        const Icon(Icons.location_on,
-                            size: 16.0, color: Colors.white),
-                        const SizedBox(width: 8.0),
-                        Text(
-                          location,
-                          style: const TextStyle(
-                            fontSize: 14.0,
-                            color: Colors.white, // Ensure text visibility
+                    if (location.isNotEmpty)
+                      Row(
+                        children: [
+                          const Icon(Icons.location_on,
+                              size: 16.0, color: Colors.white),
+                          const SizedBox(width: 8.0),
+                          Text(
+                            location,
+                            style: const TextStyle(
+                              fontSize: 14.0,
+                              color: Colors.white, // Ensure text visibility
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
                   ],
                 ),
               ),
