@@ -74,6 +74,7 @@ class EventCard extends StatelessWidget {
                     Row(
                       children: [
                         const Spacer(),
+                        if (location.isNotEmpty)
                         const Icon(Icons.location_on,
                             size: 16.0, color: Colors.white),
                         const SizedBox(width: 8.0),
