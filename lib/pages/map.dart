@@ -62,44 +62,6 @@ class MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                     'assets/images/HA-map.png',
                     fit: BoxFit.fitHeight,
                   ),
-                  ..._legendAreas.map((legend) {
-                    return Positioned(
-                      left: legend['left'], // X position of the clickable area
-                      top: legend['top'], // Y position of the clickable area
-                      child: Transform.rotate(
-                        angle: legend['angle'] ??
-                            0, // Rotate by the specified angle, or 0 if not specified
-                        child: GestureDetector(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text(legend['label']),
-                                  actions: <Widget>[
-                                    ElevatedButton(
-                                      child: Text('Close'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                          child: Container(
-                            width:
-                                legend['width'], // Width of the clickable area
-                            height: legend[
-                                'height'], // Height of the clickable area
-                            color: Colors.red
-                                .withOpacity(0.5), // Make it semi-transparent
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
                 ],
               ),
             ),
@@ -132,26 +94,6 @@ class MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       ),
     );
   }
-
-  List<Map<String, dynamic>> _legendAreas = [
-    {
-      'label': 'Kids Zone / Inflatables',
-      'left': 85.0,
-      'top': 447.0,
-      'width': 190.0,
-      'height': 110.0,
-      'angle': 0.14,
-    },
-    {
-      'label': 'Youth and Kids Area',
-      'left': 176.0,
-      'top': 587.0,
-      'width': 125.0,
-      'height': 85.0,
-      'angle': 0.16,
-    },
-    // Add more maps for other legend entries
-  ];
 
   List<Widget> _legends = [
     Row(
