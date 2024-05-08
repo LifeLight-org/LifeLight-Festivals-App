@@ -31,8 +31,16 @@ final List<Map<String, dynamic>> buttons = [
   {'icon': Icons.info, 'text': 'RESOURCES', 'page': ResourcesPage()},
   {'icon': Icons.star, 'text': 'SPONSORS', 'page': SponsorPage()},
   {'icon': Icons.monetization_on, 'text': 'DONATE', 'page': DonatePage()},
-  {'icon': FaIcon(FontAwesomeIcons.handsPraying), 'text': 'KNOW GOD', 'page': KnowGodPage()},
-  {'icon': FaIcon(FontAwesomeIcons.solidPaperPlane), 'text': 'CONNECT', 'page': ConnectPage()},
+  {
+    'icon': FaIcon(FontAwesomeIcons.handsPraying),
+    'text': 'KNOW GOD',
+    'page': KnowGodPage()
+  },
+  {
+    'icon': FaIcon(FontAwesomeIcons.solidPaperPlane),
+    'text': 'CONNECT',
+    'page': ConnectPage()
+  },
 ];
 
 class HomePageState extends State<HomePage> {
@@ -166,22 +174,21 @@ class HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: GridView.count(
-                        crossAxisCount: 2,
-                        childAspectRatio: 1.0,
-                        padding: const EdgeInsets.only(
-                            top: 0.0, left: 40.0, right: 40.0),
-                        mainAxisSpacing: 0.0,
-                        crossAxisSpacing: 55.0,
-                        children: <Widget>[
-                          for (var button in buttons)
-                            IconButtonCard(
-                              icon: button['icon'],
-                              text: button['text'],
-                              page: button['page'],
-                            ),
-                        ],
+                    Container(
+                      height: MediaQuery.of(context).size.height *
+                          0.67, // 80% of the screen height
+                      child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                        ),
+                        itemCount: buttons.length,
+                        itemBuilder: (context, index) {
+                          return IconButtonCard(
+                            icon: buttons[index]['icon'],
+                            text: buttons[index]['text'],
+                            page: buttons[index]['page'],
+                          );
+                        },
                       ),
                     )
                   ],
