@@ -64,14 +64,17 @@ class IconButtonCard extends StatelessWidget {
         ),
         Positioned(
           bottom: 0,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 5.0),
-            child: Text(
-              text,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 23.0),
-              softWrap: true, // Add this
-              overflow: TextOverflow.ellipsis, // Add this
+          child: Container(
+            width: 150.0, // Set a fixed width for the container
+            child: Padding(
+              padding: const EdgeInsets.only(top: 5.0),
+              child: Text(
+                text,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 23.0),
+                softWrap: true,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ),
         ),
