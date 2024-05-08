@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class IconButtonCard extends StatelessWidget {
-  final IconData icon;
+  final dynamic icon; // Change this from Widget to dynamic
   final String text;
   final Widget page;
 
@@ -11,6 +12,16 @@ class IconButtonCard extends StatelessWidget {
     required this.text,
     required this.page,
   }) : super(key: key);
+
+Widget iconWidget() { // Helper function to return the correct widget
+  if (icon is IconData) {
+    return Icon(icon, size: 50.0); // Increase the size here
+  } else if (icon is FaIcon) {
+    return FaIcon(icon.icon, size: 40.0); // Increase the size here
+  } else {
+    throw ArgumentError('icon must be of type IconData or FaIcon');
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -48,11 +59,7 @@ class IconButtonCard extends StatelessWidget {
               MaterialPageRoute(builder: (context) => page),
             );
           },
-          child: Icon(
-            icon,
-            size: 50.0,
-            color: Colors.black,
-          ),
+          child: iconWidget(), // Use the helper function here
         ),
         Positioned(
           bottom: 0,

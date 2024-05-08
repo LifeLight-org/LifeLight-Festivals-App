@@ -117,6 +117,7 @@ class ArtistLineupPageState extends State<ArtistLineupPage>
     var uniqueDates = _getUniqueDates();
     return Scaffold(
       appBar: AppBar(
+        title: Text('Artist Lineup'), // Add this line
         bottom: _buildTabBar(uniqueDates, _dateController, formatDate),
       ),
       body: _buildBody(uniqueDates),

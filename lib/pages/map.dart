@@ -50,21 +50,28 @@ class MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       ),
       body: Stack(
         children: [
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: InteractiveViewer(
-              minScale: 0.5,
-              maxScale: 4.0,
-              transformationController: _controller,
-              child: Stack(
-                children: [
-                  Image.asset(
-                    'assets/images/HA-map.png',
-                    fit: BoxFit.fitHeight,
+          LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              // Calculate the scale
+              double scale = constraints.maxWidth /
+                  1000; // Replace 1000 with the actual width of your image
+
+              // Calculate the aspect ratio
+              double aspectRatio = constraints.maxWidth / constraints.maxHeight;
+
+              return InteractiveViewer(
+                minScale: scale,
+                maxScale: 4.0,
+                transformationController: _controller,
+                child: AspectRatio(
+                  aspectRatio: aspectRatio, // Use the calculated aspect ratio
+                  child: Image.asset(
+                    'assets/images/HA-map.jpg',
+                    fit: BoxFit.scaleDown, // Change this line
                   ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           ),
           SlideTransition(
             position: Tween<Offset>(

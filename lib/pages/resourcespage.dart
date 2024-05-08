@@ -78,32 +78,43 @@ class ResourcesPage extends StatelessWidget {
         title: const Text('Resources'),
       ),
       body: SingleChildScrollView(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    _buildSectionTitle('Pocket Testament League'),
-                    _buildSectionContent(
-                      "The Pocket Testament League app is your digital tool for sharing the message of the Bible. Access digital New Testaments, get tips for effective evangelism.",
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 15.0),
-                      child: ElevatedButton(
-                        onPressed: () => _launchAppURL(context),
-                        child: const Text('Open The PTL App'),
-                      ),
-                    ),
-                  ],
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _buildSectionTitle('Pocket Testament League'),
+              _buildSectionContent(
+                "The Pocket Testament League app is your digital tool for sharing the message of the Bible. Access digital New Testaments, get tips for effective evangelism.",
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 15.0),
+                child: ElevatedButton(
+                  onPressed: () => _launchAppURL(context),
+                  child: const Text('Open The PTL App'),
                 ),
               ),
-            ),
-          ],
+              // Add more sections here
+              _buildSectionTitle('Hope With God'),
+              _buildSectionContent(
+                "Hope With God is an online platform that provides resources and support for individuals seeking spiritual guidance and encouragement. It helps people face life's challenges with faith and hope, providing inspiration, answers, and a supportive community for spiritual growth.",
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 15.0),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    const url = 'https://www.hopewithgod.com';
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      throw 'Could not launch $url';
+                    }
+                  },
+                  child: const Text('Open hopewithgod.com'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

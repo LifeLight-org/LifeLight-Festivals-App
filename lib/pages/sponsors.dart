@@ -96,7 +96,7 @@ class SponsorPageState extends State<SponsorPage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "Discover more about our incredible sponsors by clicking on their logos below.",
+              "Thank You to our incredible sponsors click on their logos below to learn more.",
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),

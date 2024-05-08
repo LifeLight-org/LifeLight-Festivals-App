@@ -10,7 +10,10 @@ import 'package:lifelight_app/pages/settings.dart';
 import 'package:lifelight_app/pages/sponsors.dart';
 import 'package:lifelight_app/pages/faqpage.dart';
 import 'package:lifelight_app/pages/resourcespage.dart';
+import 'package:lifelight_app/pages/connectpage.dart';
+import 'package:lifelight_app/pages/knowgodpage.dart';
 import 'package:lifelight_app/component-widgets/iconbutton.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -24,10 +27,12 @@ final List<Map<String, dynamic>> buttons = [
   {'icon': Icons.people, 'text': 'ARTISTS', 'page': ArtistLineupPage()},
   {'icon': Icons.shopping_bag, 'text': 'STORE', 'page': StorePage()},
   {'icon': Icons.calendar_today, 'text': 'SCHEDULE', 'page': SchedulePage()},
-  {'icon': Icons.question_mark, 'text': 'INFO', 'page': FAQPage()},
+  {'icon': Icons.question_mark, 'text': 'FAQ', 'page': FAQPage()},
   {'icon': Icons.info, 'text': 'RESOURCES', 'page': ResourcesPage()},
   {'icon': Icons.star, 'text': 'SPONSORS', 'page': SponsorPage()},
   {'icon': Icons.monetization_on, 'text': 'DONATE', 'page': DonatePage()},
+  {'icon': FaIcon(FontAwesomeIcons.handsPraying), 'text': 'KNOW GOD', 'page': KnowGodPage()},
+  {'icon': FaIcon(FontAwesomeIcons.solidPaperPlane), 'text': 'CONNECT', 'page': ConnectPage()},
 ];
 
 class HomePageState extends State<HomePage> {
@@ -82,104 +87,109 @@ class HomePageState extends State<HomePage> {
       ),
       Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SettingsPage()),
-                );
-              },
-            ),
-          ],
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(kToolbarHeight),
+          child: AppBar(
+            backgroundColor: Colors.transparent, // Set your desired color
+            surfaceTintColor: Colors.transparent,
+            scrolledUnderElevation: 0,
+            elevation: 0,
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.settings),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingsPage()),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
         body: StreamBuilder<Map<String, String>>(
-            stream: getFestival(),
-            builder: (BuildContext context,
-                AsyncSnapshot<Map<String, String>> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting ||
-                  snapshot.data!['logo'] == '') {
-                return Center(
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                        Theme.of(context).colorScheme.secondary),
-                  ),
-                );
+          stream: getFestival(),
+          builder: (BuildContext context,
+              AsyncSnapshot<Map<String, String>> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting ||
+                snapshot.data!['logo'] == '') {
+              return Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).colorScheme.secondary),
+                ),
+              );
+            } else {
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
               } else {
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      if (snapshot.data!['logo']!.isNotEmpty)
-                        Hero(
-                          tag: 'eventLogo',
-                          child: Image.asset(
-                            snapshot.data!['logo']!,
-                            height: 120, // Adjust the height as needed
-                            width: double.infinity,
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                'assets/images/LL-Logo.png', // path to your default logo
-                                height: 150,
-                                width: double.infinity,
-                                fit: BoxFit.contain,
-                              );
-                            },
-                          ),
-                        ),
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(top: 7.0), // Add top padding
-                        child: Text(
-                          'BRINGING LIGHT INTO DARKNESS',
-                          style: TextStyle(
-                            fontFamily: 'HelveticaNeueLT',
-                            fontSize: 19,
-                            letterSpacing: -2.0, // Adjust the letter spacing
-                            foreground: Paint()
-                              ..style = PaintingStyle.stroke
-                              ..strokeWidth = 0.5 // Set a thin outline
-                              ..color = Colors.white,
-                            shadows: [
-                              Shadow(
-                                offset: Offset(0.5, 0.5),
-                                color: Colors.black,
-                              ),
-                            ],
-                          ),
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    if (snapshot.data!['logo']!.isNotEmpty)
+                      Hero(
+                        tag: 'eventLogo',
+                        child: Image.asset(
+                          snapshot.data!['logo']!,
+                          height: 120, // Adjust the height as needed
+                          width: double.infinity,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              'assets/images/LL-Logo.png', // path to your default logo
+                              height: 150,
+                              width: double.infinity,
+                              fit: BoxFit.contain,
+                            );
+                          },
                         ),
                       ),
-                      Expanded(
-                        child: GridView.count(
-                          crossAxisCount: 2,
-                          childAspectRatio: 1.0,
-                          padding: const EdgeInsets.only(
-                              top: 0.0, left: 40.0, right: 40.0),
-                          mainAxisSpacing: 0.0,
-                          crossAxisSpacing: 40.0,
-                          children: <Widget>[
-                            for (var button in buttons)
-                              IconButtonCard(
-                                icon: button['icon'],
-                                text: button['text'],
-                                page: button['page'],
-                              ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(top: 7.0), // Add top padding
+                      child: Text(
+                        'BRINGING LIGHT INTO DARKNESS',
+                        style: TextStyle(
+                          fontFamily: 'HelveticaNeueLT',
+                          fontSize: 19,
+                          letterSpacing: -2.0, // Adjust the letter spacing
+                          foreground: Paint()
+                            ..style = PaintingStyle.stroke
+                            ..strokeWidth = 0.5 // Set a thin outline
+                            ..color = Colors.white,
+                          shadows: [
+                            Shadow(
+                              offset: Offset(0.5, 0.5),
+                              color: Colors.black,
+                            ),
                           ],
                         ),
-                      )
-                    ],
-                  );
-                }
+                      ),
+                    ),
+                    Expanded(
+                      child: GridView.count(
+                        crossAxisCount: 2,
+                        childAspectRatio: 1.0,
+                        padding: const EdgeInsets.only(
+                            top: 0.0, left: 40.0, right: 40.0),
+                        mainAxisSpacing: 0.0,
+                        crossAxisSpacing: 55.0,
+                        children: <Widget>[
+                          for (var button in buttons)
+                            IconButtonCard(
+                              icon: button['icon'],
+                              text: button['text'],
+                              page: button['page'],
+                            ),
+                        ],
+                      ),
+                    )
+                  ],
+                );
               }
-            },
-          ),
+            }
+          },
+        ),
       ),
     ]);
   }
