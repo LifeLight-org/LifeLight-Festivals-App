@@ -13,20 +13,20 @@ class IconButtonCard extends StatelessWidget {
     required this.page,
   }) : super(key: key);
 
-Widget iconWidget() {
-  if (icon is IconData) {
-    return Icon(icon, size: 50.0, color: Colors.black);
-  } else if (icon is FaIcon) {
-    return FaIcon(icon.icon, size: 40.0, color: Colors.black);
-  } else {
-    throw ArgumentError('icon must be of type IconData or FaIcon');
+  Widget iconWidget() {
+    if (icon is IconData) {
+      return Icon(icon, size: 50.0, color: Colors.black);
+    } else if (icon is FaIcon) {
+      return FaIcon(icon.icon, size: 40.0, color: Colors.black);
+    } else {
+      throw ArgumentError('icon must be of type IconData or FaIcon');
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(1.0),
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
@@ -51,15 +51,15 @@ Widget iconWidget() {
             bottom: 0,
             child: Container(
               width: 170.0,
-              child: Text(
-                text,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 23.0),
-                softWrap: true,
-                overflow: TextOverflow.ellipsis,
+                child: Text(
+                  text,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 23.0),
+                  softWrap: true,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

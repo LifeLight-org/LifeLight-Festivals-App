@@ -175,22 +175,28 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                     Container(
-                      height: MediaQuery.of(context).size.height *
-                          0.67, // 80% of the screen height
-                      child: GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
+                      height: MediaQuery.of(context).size.height * 0.67,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30), // Adjust as needed
+                        child: GridView.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 70,
+                            mainAxisSpacing: 15,
+                          ),
+                          itemCount: buttons.length,
+                          itemBuilder: (context, index) {
+                            return IconButtonCard(
+                              icon: buttons[index]['icon'],
+                              text: buttons[index]['text'],
+                              page: buttons[index]['page'],
+                            );
+                          },
                         ),
-                        itemCount: buttons.length,
-                        itemBuilder: (context, index) {
-                          return IconButtonCard(
-                            icon: buttons[index]['icon'],
-                            text: buttons[index]['text'],
-                            page: buttons[index]['page'],
-                          );
-                        },
                       ),
-                    )
+                    ),
                   ],
                 );
               }
