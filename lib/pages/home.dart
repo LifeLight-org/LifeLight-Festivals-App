@@ -183,7 +183,7 @@ class HomePageState extends State<HomePage> {
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            crossAxisSpacing: 70,
+                            crossAxisSpacing: 73,
                             mainAxisSpacing: 15,
                           ),
                           itemCount: buttons.length,

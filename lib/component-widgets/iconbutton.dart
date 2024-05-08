@@ -23,45 +23,46 @@ class IconButtonCard extends StatelessWidget {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(1.0),
-      child: Stack(
-        alignment: Alignment.center,
-        children: <Widget>[
-          Container(
-            height: 80.0, // Increased size
-            width: 80.0, // Increased size
-            decoration: BoxDecoration(
-              color: Color(0xffFFD000),
-              borderRadius: BorderRadius.circular(5),
+@override
+Widget build(BuildContext context) {
+  return Padding(
+    padding: const EdgeInsets.all(1.0),
+    child: Stack(
+      alignment: Alignment.center,
+      children: <Widget>[
+        Container(
+          height: 80.0, // Increased size
+          width: 80.0, // Increased size
+          decoration: BoxDecoration(
+            color: Color(0xffFFD000),
+            borderRadius: BorderRadius.circular(5),
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => page),
+            );
+          },
+          child: iconWidget(),
+        ),
+        Positioned(
+          
+          bottom: -3,
+          child: Container(
+            padding: EdgeInsets.only(top: 10.0), // Add padding here
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 23.0),
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => page),
-              );
-            },
-            child: iconWidget(),
-          ),
-          Positioned(
-            bottom: 0,
-            child: Container(
-              width: 170.0,
-                child: Text(
-                  text,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 23.0),
-                  softWrap: true,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 }
