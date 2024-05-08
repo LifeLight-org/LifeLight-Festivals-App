@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:lifelight_app/pages/artist_lineup.dart';
 import 'package:lifelight_app/pages/store.dart';
 import 'package:lifelight_app/pages/donate.dart';
@@ -12,6 +11,7 @@ import 'package:lifelight_app/pages/faqpage.dart';
 import 'package:lifelight_app/pages/resourcespage.dart';
 import 'package:lifelight_app/pages/connectpage.dart';
 import 'package:lifelight_app/pages/knowgodpage.dart';
+import 'package:lifelight_app/pages/schedule.dart';
 import 'package:lifelight_app/component-widgets/iconbutton.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -22,30 +22,30 @@ class HomePage extends StatefulWidget {
   HomePageState createState() => HomePageState();
 }
 
-final List<Map<String, dynamic>> buttons = [
-  {'icon': Icons.map, 'text': 'MAP', 'page': MapPage()},
-  {'icon': Icons.people, 'text': 'ARTISTS', 'page': ArtistLineupPage()},
-  {'icon': Icons.shopping_bag, 'text': 'STORE', 'page': StorePage()},
-  {'icon': Icons.calendar_today, 'text': 'SCHEDULE', 'page': SchedulePage()},
-  {'icon': Icons.question_mark, 'text': 'FAQ', 'page': FAQPage()},
-  {'icon': Icons.info, 'text': 'RESOURCES', 'page': ResourcesPage()},
-  {'icon': Icons.star, 'text': 'SPONSORS', 'page': SponsorPage()},
-  {'icon': Icons.monetization_on, 'text': 'DONATE', 'page': DonatePage()},
-  {
-    'icon': FaIcon(FontAwesomeIcons.handsPraying),
-    'text': 'KNOW GOD',
-    'page': KnowGodPage()
-  },
-  {
-    'icon': FaIcon(FontAwesomeIcons.solidPaperPlane),
-    'text': 'CONNECT',
-    'page': ConnectPage()
-  },
-];
-
 class HomePageState extends State<HomePage> {
   late Stream<Map<String, String>> festivalData;
   String? uuid;
+
+  final List<Map<String, dynamic>> buttons = [
+    {'icon': Icons.map, 'text': 'MAP', 'page': MapPage()},
+    {'icon': Icons.people, 'text': 'ARTISTS', 'page': ArtistLineupPage()},
+    {'icon': Icons.calendar_today, 'text': 'SCHEDULE', 'page': SchedulePage()},
+    {'icon': Icons.star, 'text': 'SPONSORS', 'page': SponsorPage()},
+    {'icon': Icons.question_mark, 'text': 'FAQ', 'page': FAQPage()},
+    {'icon': Icons.monetization_on, 'text': 'DONATE', 'page': DonatePage()},
+    {
+      'icon': FaIcon(FontAwesomeIcons.handsPraying),
+      'text': 'KNOW GOD',
+      'page': KnowGodPage()
+    },
+    {'icon': Icons.info, 'text': 'RESOURCES', 'page': ResourcesPage()},
+    {'icon': Icons.shopping_bag, 'text': 'STORE', 'page': StorePage()},
+    {
+      'icon': FaIcon(FontAwesomeIcons.solidPaperPlane),
+      'text': 'CONNECT',
+      'page': ConnectPage()
+    },
+  ];
 
   @override
   void initState() {
@@ -85,125 +85,144 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
-      Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/background.jpg"),
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
-      Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(kToolbarHeight),
-          child: AppBar(
-            backgroundColor: Colors.transparent, // Set your desired color
-            surfaceTintColor: Colors.transparent,
-            scrolledUnderElevation: 0,
-            elevation: 0,
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.settings),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SettingsPage()),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-        body: StreamBuilder<Map<String, String>>(
-          stream: getFestival(),
-          builder: (BuildContext context,
-              AsyncSnapshot<Map<String, String>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting ||
-                snapshot.data!['logo'] == '') {
-              return Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                      Theme.of(context).colorScheme.secondary),
-                ),
-              );
-            } else {
-              if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    if (snapshot.data!['logo']!.isNotEmpty)
-                      Hero(
-                        tag: 'eventLogo',
-                        child: Image.asset(
-                          snapshot.data!['logo']!,
-                          height: 120, // Adjust the height as needed
-                          width: double.infinity,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Image.asset(
-                              'assets/images/LL-Logo.png', // path to your default logo
-                              height: 150,
-                              width: double.infinity,
-                              fit: BoxFit.contain,
-                            );
-                          },
-                        ),
-                      ),
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(top: 7.0), // Add top padding
-                      child: Text(
-                        'BRINGING LIGHT INTO DARKNESS',
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeueLT',
-                          fontSize: 19,
-                          letterSpacing: -2.0, // Adjust the letter spacing
-                          foreground: Paint()
-                            ..style = PaintingStyle.stroke
-                            ..strokeWidth = 0.5 // Set a thin outline
-                            ..color = Colors.white,
-                          shadows: [
-                            Shadow(
-                              offset: Offset(0.5, 0.5),
-                              color: Colors.black,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.67,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10), // Adjust as needed
-                        child: GridView.builder(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 00,
-                            mainAxisSpacing: 13,
-                          ),
-                          itemCount: buttons.length,
-                          itemBuilder: (context, index) {
-                            return IconButtonCard(
-                              icon: buttons[index]['icon'],
-                              text: buttons[index]['text'],
-                              page: buttons[index]['page'],
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              }
-            }
-          },
-        ),
-      ),
+      buildBackground(),
+      buildScaffold(context),
     ]);
+  }
+
+  Container buildBackground() {
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage("assets/images/background.jpg"),
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
+  Scaffold buildScaffold(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: buildAppBar(),
+      body: buildBody(context),
+    );
+  }
+
+  PreferredSize buildAppBar() {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(kToolbarHeight),
+      child: AppBar(
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        elevation: 0,
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsPage()),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  StreamBuilder<Map<String, String>> buildBody(BuildContext context) {
+    return StreamBuilder<Map<String, String>>(
+      stream: getFestival(),
+      builder:
+          (BuildContext context, AsyncSnapshot<Map<String, String>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting ||
+            snapshot.data!['logo'] == '') {
+          return buildLoadingIndicator(context);
+        } else {
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            return buildContent(snapshot);
+          }
+        }
+      },
+    );
+  }
+
+  Center buildLoadingIndicator(BuildContext context) {
+    return Center(
+      child: CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation<Color>(
+            Theme.of(context).colorScheme.secondary),
+      ),
+    );
+  }
+
+  Column buildContent(AsyncSnapshot<Map<String, String>> snapshot) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        if (snapshot.data!['logo']!.isNotEmpty) buildHero(snapshot),
+        buildPadding(),
+        Expanded(
+          child: GridView.count(
+            crossAxisCount: 3,
+            children: List.generate(buttons.length, (index) {
+              return IconButtonCard(
+                icon: buttons[index]['icon'],
+                text: buttons[index]['text'],
+                page: buttons[index]['page'],
+              );
+            }),
+          ),
+        )
+      ],
+    );
+  }
+
+  Hero buildHero(AsyncSnapshot<Map<String, String>> snapshot) {
+    return Hero(
+      tag: 'eventLogo',
+      child: Image.asset(
+        snapshot.data!['logo']!,
+        height: 120,
+        width: double.infinity,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return Image.asset(
+            'assets/images/LL-Logo.png',
+            height: 150,
+            width: double.infinity,
+            fit: BoxFit.contain,
+          );
+        },
+      ),
+    );
+  }
+
+  Padding buildPadding() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 7.0, bottom: 15.0),
+      child: Text(
+        'BRINGING LIGHT INTO DARKNESS',
+        style: TextStyle(
+          fontFamily: 'HelveticaNeueLT',
+          fontSize: 19,
+          letterSpacing: -2.0,
+          foreground: Paint()
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 0.5
+            ..color = Colors.white,
+          shadows: const [
+            Shadow(
+              offset: Offset(0.5, 0.5),
+              color: Colors.black,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
