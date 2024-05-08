@@ -178,13 +178,13 @@ class HomePageState extends State<HomePage> {
                       height: MediaQuery.of(context).size.height * 0.67,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 30), // Adjust as needed
+                            horizontal: 10), // Adjust as needed
                         child: GridView.builder(
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 73,
-                            mainAxisSpacing: 15,
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 00,
+                            mainAxisSpacing: 13,
                           ),
                           itemCount: buttons.length,
                           itemBuilder: (context, index) {
