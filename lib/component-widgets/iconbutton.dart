@@ -13,15 +13,16 @@ class IconButtonCard extends StatelessWidget {
     required this.page,
   }) : super(key: key);
 
-Widget iconWidget() { // Helper function to return the correct widget
-  if (icon is IconData) {
-    return Icon(icon, size: 50.0); // Increase the size here
-  } else if (icon is FaIcon) {
-    return FaIcon(icon.icon, size: 40.0); // Increase the size here
-  } else {
-    throw ArgumentError('icon must be of type IconData or FaIcon');
+  Widget iconWidget() {
+    // Helper function to return the correct widget
+    if (icon is IconData) {
+      return Icon(icon, size: 50.0); // Increase the size here
+    } else if (icon is FaIcon) {
+      return FaIcon(icon.icon, size: 40.0); // Increase the size here
+    } else {
+      throw ArgumentError('icon must be of type IconData or FaIcon');
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -67,10 +68,10 @@ Widget iconWidget() { // Helper function to return the correct widget
             padding: const EdgeInsets.only(top: 5.0),
             child: Text(
               text,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 24.0,
-              ),
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 23.0),
+              softWrap: true, // Add this
+              overflow: TextOverflow.ellipsis, // Add this
             ),
           ),
         ),
