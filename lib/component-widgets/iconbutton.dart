@@ -48,14 +48,13 @@ Widget build(BuildContext context) {
           child: iconWidget(),
         ),
         Positioned(
-          
           bottom: -3,
           child: Container(
             padding: EdgeInsets.only(top: 10.0), // Add padding here
             child: Text(
               text,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 23.0),
+              style: TextStyle(fontSize: 20.0),
               softWrap: true,
               overflow: TextOverflow.ellipsis,
             ),
