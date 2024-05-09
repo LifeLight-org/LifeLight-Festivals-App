@@ -43,6 +43,7 @@ class HomePageState extends State<HomePage> {
     {
       'icon': FaIcon(FontAwesomeIcons.solidPaperPlane),
       'text': 'CONNECT',
+      'width': 355.0,
       'page': ConnectPage()
     },
   ];
@@ -166,16 +167,35 @@ class HomePageState extends State<HomePage> {
       children: [
         if (snapshot.data!['logo']!.isNotEmpty) buildHero(snapshot),
         buildPadding(),
-        Expanded(
-          child: GridView.count(
-            crossAxisCount: 3,
-            children: List.generate(buttons.length, (index) {
-              return IconButtonCard(
-                icon: buttons[index]['icon'],
-                text: buttons[index]['text'],
-                page: buttons[index]['page'],
-              );
-            }),
+        Container(
+          height: MediaQuery.of(context).size.height *
+              0.63, // Adjust this value as needed
+          child: Stack(
+            children: [
+              GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                ),
+                itemCount: buttons.length - 1, // Exclude the last button
+                itemBuilder: (BuildContext context, int index) {
+                  return IconButtonCard(
+                    icon: buttons[index]['icon'],
+                    text: buttons[index]['text'],
+                    page: buttons[index]['page'],
+                  );
+                },
+              ),
+              // The last button
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: IconButtonCard(
+                  icon: buttons[buttons.length - 1]['icon'],
+                  text: buttons[buttons.length - 1]['text'],
+                  width: buttons[buttons.length - 1]['width'],
+                  page: buttons[buttons.length - 1]['page'],
+                ),
+              ),
+            ],
           ),
         )
       ],
@@ -204,7 +224,7 @@ class HomePageState extends State<HomePage> {
 
   Padding buildPadding() {
     return Padding(
-      padding: const EdgeInsets.only(top: 7.0, bottom: 15.0),
+      padding: const EdgeInsets.only(top: 7.0, bottom: 6.0),
       child: Text(
         'BRINGING LIGHT INTO DARKNESS',
         style: TextStyle(
