@@ -169,7 +169,7 @@ class HomePageState extends State<HomePage> {
         buildPadding(),
         Container(
           height: MediaQuery.of(context).size.height *
-              0.63, // Adjust this value as needed
+              0.6, // Adjust this value as needed
           child: Stack(
             children: [
               GridView.builder(
