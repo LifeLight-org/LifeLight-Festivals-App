@@ -13,6 +13,8 @@ import 'package:provider/provider.dart';
 import 'package:lifelight_app/models/cart.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:lifelight_app/component-widgets/advert.dart';
 
 void main() async {
   await dotenv.load();
@@ -43,15 +45,21 @@ void main() async {
     await sharedPreferences.setString('uuid', uuid);
   }
 
+  await Hive.initFlutter();
+
   runApp(
-    OverlaySupport(
-      child: ChangeNotifierProvider(
-        create: (context) => Cart(),
-        child: MyApp(
-          theme: theme,
-          hasOnboarded: hasOnboarded,
+    MaterialApp(
+      theme: theme,
+      home: OverlaySupport(
+        child: ChangeNotifierProvider(
+          create: (context) => Cart(),
+          child: MyApp(
+            theme: theme,
+            hasOnboarded: hasOnboarded,
+          ),
         ),
       ),
+      builder: EasyLoading.init(),
     ),
   );
 }
@@ -60,10 +68,18 @@ class MyApp extends StatelessWidget {
   final ThemeData theme;
   final bool hasOnboarded;
 
-  const MyApp({Key? key, required this.theme, required this.hasOnboarded}) : super(key: key);
+  const MyApp({Key? key, required this.theme, required this.hasOnboarded})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+  //    WidgetsBinding.instance?.addPostFrameCallback((_) {
+  //      showDialog(
+  //        context: context,
+  //        builder: (context) => SponsorAd(),
+  //      );
+  //    });
+
     Widget initialScreen;
 
     if (hasOnboarded) {

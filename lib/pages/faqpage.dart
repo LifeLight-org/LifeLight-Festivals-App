@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// Default festival DB prefix
+const defaultFestivalDBPrefix = 'ha';
+
 class FAQPage extends StatefulWidget {
   FAQPage({Key? key}) : super(key: key);
 
@@ -19,16 +22,24 @@ class FAQPageState extends State<FAQPage> {
   }
 
   Future<void> fetchFAQs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? selectedFestival = prefs.getString('selectedFestivalDBPrefix');
-    String tableName = "${selectedFestival ?? 'ha'}-faq";
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? selectedFestival = prefs.getString('selectedFestivalDBPrefix');
+      String tableName = "${selectedFestival ?? defaultFestivalDBPrefix}-faq";
 
+      final response = await Supabase.instance.client.from(tableName).select();
 
-    final response = await Supabase.instance.client.from(tableName).select();
-
-    setState(() {
-      faqItems = (response as List).map((faq) => FAQItem(section: faq['section'], question: faq['question'], answer: faq['answer'])).toList();
-    });
+      setState(() {
+        faqItems = (response as List)
+            .map((faq) => FAQItem(
+                section: faq['section'],
+                question: faq['question'],
+                answer: faq['answer']))
+            .toList();
+      });
+    } catch (e) {
+      print('Failed to fetch FAQs: $e');
+    }
   }
 
   @override
@@ -42,7 +53,9 @@ class FAQPageState extends State<FAQPage> {
           Expanded(
             child: ListView(
               children: faqItems.fold(<Widget>[], (previousValue, element) {
-                if (previousValue.isEmpty || (previousValue.last as FAQItem).section != element.section) {
+                if (previousValue.isEmpty ||
+                    (previousValue.last as FAQItem).section !=
+                        element.section) {
                   String sectionTitle;
                   switch (element.section) {
                     case 0:
@@ -58,7 +71,8 @@ class FAQPageState extends State<FAQPage> {
                     padding: EdgeInsets.all(16.0),
                     child: Text(
                       sectionTitle,
-                      style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 18.0, fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                   ));
@@ -72,7 +86,10 @@ class FAQPageState extends State<FAQPage> {
             padding: EdgeInsets.all(16.0),
             child: Text(
               'NO VIDEO OR AUDIO RECORDINGS ON FESTIVAL GROUNDS',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.red),
+              style: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red),
               textAlign: TextAlign.center,
             ),
           ),
@@ -87,7 +104,12 @@ class FAQItem extends StatefulWidget {
   final String question;
   final String answer;
 
-  FAQItem({Key? key, required this.section, required this.question, required this.answer}) : super(key: key);
+  FAQItem(
+      {Key? key,
+      required this.section,
+      required this.question,
+      required this.answer})
+      : super(key: key);
 
   @override
   FAQItemState createState() => FAQItemState();

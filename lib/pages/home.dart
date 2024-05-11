@@ -11,7 +11,6 @@ import 'package:lifelight_app/pages/faqpage.dart';
 import 'package:lifelight_app/pages/resourcespage.dart';
 import 'package:lifelight_app/pages/connectpage.dart';
 import 'package:lifelight_app/pages/knowgodpage.dart';
-import 'package:lifelight_app/pages/schedule.dart';
 import 'package:lifelight_app/component-widgets/iconbutton.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -169,7 +168,7 @@ class HomePageState extends State<HomePage> {
         buildPadding(),
         Container(
           height: MediaQuery.of(context).size.height *
-              0.6, // Adjust this value as needed
+              0.63, // Adjust this value as needed
           child: Stack(
             children: [
               GridView.builder(
@@ -224,7 +223,7 @@ class HomePageState extends State<HomePage> {
 
   Padding buildPadding() {
     return Padding(
-      padding: const EdgeInsets.only(top: 7.0, bottom: 6.0),
+      padding: const EdgeInsets.only(top: 3.0),
       child: Text(
         'BRINGING LIGHT INTO DARKNESS',
         style: TextStyle(

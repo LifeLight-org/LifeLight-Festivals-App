@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lifelight_app/component-widgets/artist_card.dart';
 import 'package:intl/intl.dart';
 import 'package:lifelight_app/component-widgets/artist_popup.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class Artist {
   final String name;
@@ -21,35 +22,44 @@ class Artist {
       required this.image,
       this.bio});
 
-factory Artist.fromJson(Map<String, dynamic> json) {
-  var inputFormat = DateFormat('HH:mm:ss');
-  var outputFormat = DateFormat('h:mm a');
-  var time = outputFormat.format(inputFormat.parse(json['time']));
+  factory Artist.fromJson(Map<String, dynamic> json) {
+    var inputFormat = DateFormat('HH:mm:ss');
+    var outputFormat = DateFormat('h:mm a');
+    var time = outputFormat.format(inputFormat.parse(json['time']));
 
-  if (time == '12:00 AM') {
-    time = 'TBD';
+    if (time == '12:00 AM') {
+      time = 'TBD';
+    }
+
+    String bio = json['about'] ?? 'Bio Coming Soon!';
+
+    return Artist(
+      name: json['name'],
+      date: json['day'],
+      time: time,
+      location: json['stage'],
+      image: json['image'],
+      bio: bio,
+    );
   }
-
-  String bio = json['about'] ?? 'Bio Coming Soon!';
-
-  return Artist(
-    name: json['name'],
-    date: json['day'],
-    time: time,
-    location: json['stage'],
-    image: json['image'],
-    bio: bio,
-  );
-}
 }
 
 Future<List<Artist>> fetchArtists() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? selectedFestival = prefs.getString('selectedFestivalDBPrefix');
   String tableName = "${selectedFestival ?? 'ha'}-artist_lineup";
-  final response = await Supabase.instance.client.from(tableName).select('*');
+  var box = await Hive.openBox('artistBox');
 
-  return (response as List).map((item) => Artist.fromJson(item)).toList();
+  try {
+    final response = await Supabase.instance.client.from(tableName).select('*');
+    // If data is fetched successfully from Supabase, store it in Hive
+    box.put('artists', response);
+    return List<Artist>.from((response as List).map((item) => Artist.fromJson(item)));
+  } catch (e) {
+    // If there's an error fetching from Supabase (like no internet), fetch from Hive
+    var artists = box.get('artists', defaultValue: []);
+    return List<Artist>.from(artists.map((item) => Artist.fromJson(item)));
+  }
 }
 
 class ArtistLineupPage extends StatefulWidget {

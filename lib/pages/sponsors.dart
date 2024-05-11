@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:lifelight_app/config.dart';
 
 class SponsorPage extends StatefulWidget {
   const SponsorPage({Key? key}) : super(key: key);
@@ -12,33 +13,11 @@ class SponsorPage extends StatefulWidget {
 
 class SponsorPageState extends State<SponsorPage> {
   List<Sponsor> sponsors = [];
-  bool isScrolling = false;
-  double opacity = 1.0;
-  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     fetchSponsors();
-    _scrollController.addListener(_scrollListener);
-  }
-
-  void _scrollListener() {
-    if (_scrollController.offset <= 0) {
-      if (isScrolling) {
-        setState(() {
-          isScrolling = false;
-          opacity = 1.0;
-        });
-      }
-    } else {
-      if (!isScrolling) {
-        setState(() {
-          isScrolling = true;
-          opacity = 0.0;
-        });
-      }
-    }
   }
 
   Future<void> fetchSponsors() async {
@@ -55,23 +34,9 @@ class SponsorPageState extends State<SponsorPage> {
     List<Sponsor> items = await Future.wait(
         response.map((item) => Sponsor.fromJson(item)).toList());
 
-    List<String> tierOrder = [
-      'Partner',
-      'Bronze',
-      'Silver',
-      'Gold',
-      'Platinum',
-      'Diamond',
-      'Kingdom',
-    ];
-
-    // Sort the sponsors by tier
-// Sort the sponsors by tier
-    items.sort((a, b) =>
-        tierOrder.indexOf(a.tier).compareTo(tierOrder.indexOf(b.tier)));
-
-// Reverse the list
-    items = items.reversed.toList();
+    items.sort((a, b) => Config.tierOrder
+        .indexOf(a.tier)
+        .compareTo(Config.tierOrder.indexOf(b.tier)));
 
     setState(() {
       sponsors = items;
@@ -80,8 +45,6 @@ class SponsorPageState extends State<SponsorPage> {
 
   @override
   void dispose() {
-    _scrollController.removeListener(_scrollListener);
-    _scrollController.dispose();
     super.dispose();
   }
 
@@ -102,72 +65,86 @@ class SponsorPageState extends State<SponsorPage> {
             ),
           ),
           Expanded(
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // Adjust the number of items per row
-              ),
-              itemCount: sponsors.length,
-              itemBuilder: (context, index) {
-                final sponsor = sponsors[index];
-                return GestureDetector(
-                  onTap: () async {
-                    if ((sponsor.advert == null || sponsor.advert!.isEmpty) &&
-                        sponsor.link != null) {
-                      if (await canLaunch(sponsor.link!)) {
-                        await launch(sponsor.link!);
-                      } else {
-                        throw 'Could not launch ${sponsor.link}';
-                      }
-                    } else if (sponsor.advert != null &&
-                        sponsor.advert!.isNotEmpty) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Scaffold(
-                            body: GestureDetector(
-                              child: Stack(
-                                children: [
-                                  Center(
-                                    child: Hero(
-                                      tag: 'imageHero',
-                                      child: Image.network(sponsor.advert!),
-                                    ),
-                                  ),
-                                  Positioned(
-                                    right: 10,
-                                    top: 55,
-                                    child: IconButton(
-                                      icon: const Icon(Icons.close),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(
-                        20.0), // Adjust the padding as needed
-                    child: Image.network(
-                      sponsor.logo,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                );
-              },
-            ),
+            child: SponsorGrid(
+                key: UniqueKey(), sponsors: sponsors, onTap: _handleTap),
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _handleTap(Sponsor sponsor) async {
+    if ((sponsor.advert == null || sponsor.advert!.isEmpty) &&
+        sponsor.link != null) {
+      if (await canLaunch(sponsor.link!)) {
+        await launch(sponsor.link!);
+      } else {
+        throw 'Could not launch ${sponsor.link}';
+      }
+    } else if (sponsor.advert != null && sponsor.advert!.isNotEmpty) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Scaffold(
+            body: GestureDetector(
+              child: Stack(
+                children: [
+                  Center(
+                    child: Hero(
+                      tag: 'imageHero',
+                      child: Image.network(sponsor.advert!),
+                    ),
+                  ),
+                  Positioned(
+                    right: 10,
+                    top: 55,
+                    child: IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        ),
+      );
+    }
+  }
+}
+
+class SponsorGrid extends StatelessWidget {
+  final List<Sponsor> sponsors;
+  final Function(Sponsor) onTap;
+
+  const SponsorGrid({Key? key, required this.sponsors, required this.onTap})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+      ),
+      itemCount: sponsors.length,
+      itemBuilder: (context, index) {
+        final sponsor = sponsors[index];
+        return GestureDetector(
+          onTap: () => onTap(sponsor),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Image.network(
+              sponsor.logo,
+              fit: BoxFit.contain,
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -189,11 +166,11 @@ class Sponsor {
 
   static Future<Sponsor> fromJson(Map<String, dynamic> json) async {
     return Sponsor(
-      name: json['name'],
-      logo: json['logo'],
+      name: json['name'] ?? '',
+      logo: json['logo'] ?? '',
       advert: json['advert'],
       link: json['link'],
-      tier: json['tier'],
+      tier: json['tier'] ?? '',
     );
   }
 }
