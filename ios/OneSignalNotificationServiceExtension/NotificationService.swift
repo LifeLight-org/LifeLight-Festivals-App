@@ -1,3 +1,10 @@
+//
+//  NotificationService.swift
+//  OneSignalNotificationServiceExtension
+//
+//  Created by Alexavier Brink on 5/12/24.
+//
+
 import UserNotifications
 
 import OneSignalExtension
