@@ -85,73 +85,149 @@ class SchedulePageState extends State<SchedulePage> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: dates.length,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Schedule'),
-          bottom: dates.length > 1
-              ? PreferredSize(
-                  preferredSize: Size.fromHeight(kToolbarHeight),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20.0), // Adjust the padding as needed
-                    child: TabBar(
-                      isScrollable: true,
-                      tabs: dates.map((date) => Tab(text: date)).toList(),
-                    ),
+Future<List<String>> fetchLocations(String date) async {
+  String tableName = "$selectedFestival-schedule";
+  final response = await Supabase.instance.client
+      .from(tableName)
+      .select('location');
+
+  // Extract the locations and remove duplicates
+  List<String> locations =
+      response.map((item) => item['location'] as String).toSet().toList();
+
+  // Filter out locations that don't have any associated schedule items
+  locations = locations.where((location) {
+    return scheduleItems.any((item) =>
+        item.location == location && item.date == date);
+  }).toList();
+
+  return locations;
+}
+
+Widget build(BuildContext context) {
+  return DefaultTabController(
+    length: dates.length,
+    child: Scaffold(
+      appBar: AppBar(
+        title: const Text('Schedule'),
+        bottom: dates.length > 1
+            ? PreferredSize(
+                preferredSize: Size.fromHeight(kToolbarHeight),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: TabBar(
+                    isScrollable: true,
+                    tabs: dates.map((date) => Tab(text: date)).toList(),
                   ),
-                )
-              : null,
-        ),
-        body: TabBarView(
-  children: dates.map((date) {
-    // Filter the schedule items for the current date
-    var itemsForDate =
-        scheduleItems.where((item) => item.date == date).toList();
-
-    // Group the items by time
-    var itemsGroupedByTime = groupBy<ScheduleItem, String>(
-      itemsForDate,
-      (item) => item.time,
-    );
-
-    return ListView.builder(
-      itemCount: itemsGroupedByTime.keys.length,
-      itemBuilder: (context, index) {
-        final time = itemsGroupedByTime.keys.elementAt(index);
-        final itemsForTime = itemsGroupedByTime[time]!;
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                time,
-                style: Theme.of(context).textTheme.headline6,
-              ),
-            ),
-            ...itemsForTime.map((scheduleItem) {
-              return EventCard(
-                title: scheduleItem.title,
-                imageUrl: scheduleItem.imageUrl,
-                time: scheduleItem.time,
-                date: scheduleItem.date,
-                location: scheduleItem.location,
-              );
-            }).toList(),
-          ],
-        );
-      },
-    );
-  }).toList(),
-),
+                ),
+              )
+            : null,
       ),
-    );
-  }
+      body: TabBarView(
+        children: dates.map((date) {
+          return FutureBuilder<List<String>>(
+            future: fetchLocations(date),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                // If there is only one location, hide the location TabBar
+                if (snapshot.data!.length == 1) {
+                  var location = snapshot.data!.first;
+                  var itemsForLocation = scheduleItems
+                      .where((item) =>
+                          item.date == date &&
+                          item.location == location)
+                      .toList();
+                  var itemsGroupedByTime =
+                      groupBy<ScheduleItem, String>(
+                    itemsForLocation,
+                    (item) => item.time,
+                  );
+                  return buildListView(itemsGroupedByTime, context);
+                } else {
+                  return DefaultTabController(
+                    length: snapshot.data!.length,
+                    child: Column(
+                      children: [
+                        TabBar(
+                          isScrollable: true,
+                          tabs: snapshot.data!
+                              .map((location) => Tab(text: location))
+                              .toList(),
+                        ),
+                        Expanded(
+                          child: TabBarView(
+                            children: snapshot.data!.map((location) {
+                              // Filter the schedule items for the current date and location
+                              var itemsForLocation = scheduleItems
+                                  .where((item) =>
+                                      item.date == date &&
+                                      item.location == location)
+                                  .toList();
+
+                              // Group the items by time
+                              var itemsGroupedByTime =
+                                  groupBy<ScheduleItem, String>(
+                                itemsForLocation,
+                                (item) => item.time,
+                              );
+
+                              return buildListView(itemsGroupedByTime, context);
+                            }).toList(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              }
+            },
+          );
+        }).toList(),
+      ),
+    ),
+  );
+}
+
+Widget buildListView(Map<String, List<ScheduleItem>> itemsGroupedByTime, BuildContext context) {
+  return ListView.builder(
+    itemCount: itemsGroupedByTime.keys.length,
+    itemBuilder: (context, index) {
+      final time =
+          itemsGroupedByTime.keys.elementAt(index);
+      final itemsForTime =
+          itemsGroupedByTime[time]!;
+
+      return Column(
+        crossAxisAlignment:
+            CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              time,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6,
+            ),
+          ),
+          ...itemsForTime.map((scheduleItem) {
+            return EventCard(
+              title: scheduleItem.title,
+              imageUrl: scheduleItem.imageUrl,
+              time: scheduleItem.time,
+              date: scheduleItem.date,
+              location: scheduleItem.location,
+            );
+          }).toList(),
+        ],
+      );
+    },
+  );
+}
 }
 
 class ScheduleItem {

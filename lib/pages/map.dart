@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -11,6 +12,9 @@ class MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
   final TransformationController _controller = TransformationController();
   bool _showLegends = false;
   late AnimationController _slideController;
+  String _selectedfestmap =
+      'https://bjywcdylkgnaxsbgtrpr.supabase.co/storage/v1/object/public/maps/HA-Map.png';
+  late SharedPreferences _prefs;
 
   @override
   void initState() {
@@ -21,6 +25,15 @@ class MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
+
+    _loadPreferences();
+  }
+
+  void _loadPreferences() async {
+    _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _selectedfestmap = _prefs.getString('selectedFestivalDBPrefix') ?? 'HA';
+    });
   }
 
   @override
@@ -65,9 +78,9 @@ class MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                 transformationController: _controller,
                 child: AspectRatio(
                   aspectRatio: aspectRatio, // Use the calculated aspect ratio
-                  child: Image.asset(
-                    'assets/images/HA-map.jpg',
-                    fit: BoxFit.scaleDown, // Change this line
+                  child: Image.network(
+                    'https://bjywcdylkgnaxsbgtrpr.supabase.co/storage/v1/object/public/maps/${_selectedfestmap ?? 'HA'}-Map.png',
+                    fit: BoxFit.scaleDown,
                   ),
                 ),
               );
