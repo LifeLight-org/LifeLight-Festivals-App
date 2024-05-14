@@ -24,14 +24,21 @@ class IconButtonCard extends StatelessWidget {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    double actualWidth = width ?? MediaQuery.of(context).size.width * 0.2; // Use provided width or 20% of screen width
+@override
+Widget build(BuildContext context) {
+  double actualWidth = width ?? MediaQuery.of(context).size.width * 0.2; // Use provided width or 20% of screen width
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Stack(
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => page),
+          );
+        },
+        child: Stack(
           alignment: Alignment.center,
           children: <Widget>[
             SizedBox(
@@ -44,19 +51,12 @@ class IconButtonCard extends StatelessWidget {
                 ),
               ),
             ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => page),
-                );
-              },
-              child: iconWidget(),
-            ),
+            iconWidget(),
           ],
         ),
-        Text(text, style: TextStyle(color: Colors.white, fontSize: 21.0)),
-      ],
-    );
-  }
+      ),
+      Text(text, style: TextStyle(color: Colors.white, fontSize: 21.0)),
+    ],
+  );
+}
 }

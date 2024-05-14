@@ -95,7 +95,7 @@ class ArtistLineupPageState extends State<ArtistLineupPage>
     var inputFormat = DateFormat('yyyy-MM-dd');
     var inputDate = inputFormat.parse(date);
 
-    var outputFormat = DateFormat('EEEE');
+    var outputFormat = DateFormat('EEEE, MMM d');
     var outputDate = outputFormat.format(inputDate);
 
     return outputDate;
