@@ -11,6 +11,7 @@ class Artist {
   final String date;
   final String location;
   final String time;
+  String displayTime;
   final String image;
   final String? bio;
 
@@ -18,6 +19,7 @@ class Artist {
       {required this.name,
       required this.date,
       required this.time,
+      required this.displayTime,
       required this.location,
       required this.image,
       this.bio});
@@ -25,22 +27,35 @@ class Artist {
   factory Artist.fromJson(Map<String, dynamic> json) {
     var inputFormat = DateFormat('HH:mm:ss');
     var outputFormat = DateFormat('h:mm a');
-    var time = outputFormat.format(inputFormat.parse(json['time']));
+    var time = json['time'];
+    var displayTime = outputFormat.format(inputFormat.parse(time));
 
-    if (time == '12:00 AM') {
-      time = 'TBD';
+    if (time == '00:00:00') {
+      displayTime = 'TBA';
     }
 
     String bio = json['about'] ?? 'Bio Coming Soon!';
-
     return Artist(
       name: json['name'],
-      date: json['day'],
+      date: json['date'],
       time: time,
+      displayTime: displayTime,
       location: json['stage'],
       image: json['image'],
       bio: bio,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'date': date,
+      'time': time,
+      'displayTime': displayTime,
+      'location': location,
+      'image': image,
+      'bio': bio,
+    };
   }
 }
 
@@ -52,13 +67,25 @@ Future<List<Artist>> fetchArtists() async {
 
   try {
     final response = await Supabase.instance.client.from(tableName).select('*');
-    // If data is fetched successfully from Supabase, store it in Hive
-    box.put('artists', response);
-    return List<Artist>.from((response as List).map((item) => Artist.fromJson(item)));
+    List<Artist> artists = List<Artist>.from(
+        (response as List).map((item) => Artist.fromJson(item)));
+    // Store the artists in Hive
+    box.put('artists', artists.map((artist) => artist.toJson()).toList());
+    artists.sort((a, b) {
+      var adate = DateFormat('yyyy-MM-dd').parse(a.date);
+      var bdate = DateFormat('yyyy-MM-dd').parse(b.date);
+      var atime = DateFormat('HH:mm:ss').parse(a.time);
+      var btime = DateFormat('HH:mm:ss').parse(b.time);
+      return adate.compareTo(bdate) == 0
+          ? atime.compareTo(btime)
+          : adate.compareTo(bdate);
+    });
+
+    return artists;
   } catch (e) {
-    // If there's an error fetching from Supabase (like no internet), fetch from Hive
-    var artists = box.get('artists', defaultValue: []);
-    return List<Artist>.from(artists.map((item) => Artist.fromJson(item)));
+    // Fetch from Hive
+    var artistsJson = box.get('artists', defaultValue: []);
+    return List<Artist>.from(artistsJson.map((item) => Artist.fromJson(item)));
   }
 }
 
@@ -231,7 +258,7 @@ class ArtistLineupPageState extends State<ArtistLineupPage>
             return ArtistPopup(
               artistName: artist.name,
               stage: artist.location,
-              playtime: artist.time,
+              playtime: artist.displayTime,
               imageUrl: artist.image,
               aboutText: artist.bio ?? 'Coming Soon!',
             );
