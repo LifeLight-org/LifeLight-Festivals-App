@@ -67,179 +67,184 @@ class SchedulePageState extends State<SchedulePage> {
     selectedFestival = prefs.getString('selectedFestivalDBPrefix') ?? 'ha';
   }
 
-  Future<void> fetchScheduleItems() async {
-    String tableName = "$selectedFestival-schedule";
+Future<void> fetchScheduleItems() async {
+  String tableName = "$selectedFestival-schedule";
 
-    final response = await Supabase.instance.client.from(tableName).select('*');
+  final response = await Supabase.instance.client.from(tableName).select('*');
 
-    if (response.isEmpty) {
-      throw Exception('No artists found');
-    }
-
-    List<ScheduleItem> items = await Future.wait(response
-        .map((item) => ScheduleItem.fromJson(item, timeFormat, displayFormat))
-        .toList());
-
-    setState(() {
-      scheduleItems = items;
-    });
+  if (response.isEmpty) {
+    throw Exception('No artists found');
   }
 
-Future<List<String>> fetchLocations(String date) async {
-  String tableName = "$selectedFestival-schedule";
-  final response = await Supabase.instance.client
-      .from(tableName)
-      .select('location');
+  List<ScheduleItem> items = await Future.wait(response
+      .map((item) => ScheduleItem.fromJson(item, timeFormat, displayFormat))
+      .toList());
 
-  // Extract the locations and remove duplicates
-  List<String> locations =
-      response.map((item) => item['location'] as String).toSet().toList();
+  // Sort the items by time
+  items.sort((a, b) {
+    DateTime timeA = displayFormat.parse(a.time); // Use displayFormat instead of timeFormat
+    DateTime timeB = displayFormat.parse(b.time); // Use displayFormat instead of timeFormat
+    return timeA.compareTo(timeB); // Compare DateTime objects
+  });
 
-  // Filter out locations that don't have any associated schedule items
-  locations = locations.where((location) {
-    return scheduleItems.any((item) =>
-        item.location == location && item.date == date);
-  }).toList();
-
-  return locations;
+  setState(() {
+    scheduleItems = items;
+  });
 }
 
-Widget build(BuildContext context) {
-  return DefaultTabController(
-    length: dates.length,
-    child: Scaffold(
-      appBar: AppBar(
-        title: const Text('Schedule'),
-        bottom: dates.length > 1
-            ? PreferredSize(
-                preferredSize: Size.fromHeight(kToolbarHeight),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: TabBar(
-                    isScrollable: true,
-                    tabs: dates.map((date) => Tab(text: date)).toList(),
-                  ),
-                ),
-              )
-            : null,
-      ),
-      body: TabBarView(
-        children: dates.map((date) {
-          return FutureBuilder<List<String>>(
-            future: fetchLocations(date),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else {
-                // If there is only one location, hide the location TabBar
-                if (snapshot.data!.length == 1) {
-                  var location = snapshot.data!.first;
-                  var itemsForLocation = scheduleItems
-                      .where((item) =>
-                          item.date == date &&
-                          item.location == location)
-                      .toList();
-                  var itemsGroupedByTime =
-                      groupBy<ScheduleItem, String>(
-                    itemsForLocation,
-                    (item) => item.time,
-                  );
-                  return buildListView(itemsGroupedByTime, context);
-                } else {
-                  return DefaultTabController(
-                    length: snapshot.data!.length,
-                    child: Column(
-                      children: [
-                        TabBar(
-                          isScrollable: true,
-                          tabs: snapshot.data!
-                              .map((location) => Tab(text: location))
-                              .toList(),
-                        ),
-                        Expanded(
-                          child: TabBarView(
-                            children: snapshot.data!.map((location) {
-                              // Filter the schedule items for the current date and location
-                              var itemsForLocation = scheduleItems
-                                  .where((item) =>
-                                      item.date == date &&
-                                      item.location == location)
-                                  .toList();
+  Future<List<String>> fetchLocations(String date) async {
+    String tableName = "$selectedFestival-schedule";
+    final response =
+        await Supabase.instance.client.from(tableName).select('location');
 
-                              // Group the items by time
-                              var itemsGroupedByTime =
-                                  groupBy<ScheduleItem, String>(
-                                itemsForLocation,
-                                (item) => item.time,
-                              );
+    // Extract the locations and remove duplicates
+    List<String> locations =
+        response.map((item) => item['location'] as String).toSet().toList();
 
-                              return buildListView(itemsGroupedByTime, context);
-                            }).toList(),
-                          ),
-                        ),
-                      ],
+    // Filter out locations that don't have any associated schedule items
+    locations = locations.where((location) {
+      return scheduleItems
+          .any((item) => item.location == location && item.date == date);
+    }).toList();
+
+    return locations;
+  }
+
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: dates.length,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Schedule'),
+          bottom: dates.length > 1
+              ? PreferredSize(
+                  preferredSize: Size.fromHeight(kToolbarHeight),
+
+                    child: TabBar(
+                      isScrollable: true,
+                      tabs: dates.map((date) => Tab(text: date)).toList(),
                     ),
-                  );
+                )
+              : null,
+        ),
+        body: TabBarView(
+          children: dates.map((date) {
+            return FutureBuilder<List<String>>(
+              future: fetchLocations(date),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  // If there is only one location, hide the location TabBar
+                  if (snapshot.data!.length == 1) {
+                    var location = snapshot.data!.first;
+                    var itemsForLocation = scheduleItems
+                        .where((item) =>
+                            item.date == date && item.location == location)
+                        .toList();
+                    var itemsGroupedByTime = groupBy<ScheduleItem, String>(
+                      itemsForLocation,
+                      (item) => item.time,
+                    );
+                    return buildListView(itemsGroupedByTime, context);
+                  } else {
+                    return DefaultTabController(
+                      length: snapshot.data!.length,
+                      child: Column(
+                        children: [
+                          TabBar(
+                            isScrollable: true,
+                            tabs: snapshot.data!
+                                .map((location) => Tab(text: location))
+                                .toList(),
+                          ),
+                          Expanded(
+                            child: TabBarView(
+                              children: snapshot.data!.map((location) {
+                                // Filter the schedule items for the current date and location
+                                var itemsForLocation = scheduleItems
+                                    .where((item) =>
+                                        item.date == date &&
+                                        item.location == location)
+                                    .toList();
+
+                                // Group the items by time
+                                var itemsGroupedByTime =
+                                    groupBy<ScheduleItem, String>(
+                                  itemsForLocation,
+                                  (item) => item.time,
+                                );
+
+                                return buildListView(
+                                    itemsGroupedByTime, context);
+                              }).toList(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
                 }
-              }
-            },
-          );
-        }).toList(),
-      ),
-    ),
-  );
-}
-
-Widget buildListView(Map<String, List<ScheduleItem>> itemsGroupedByTime, BuildContext context) {
-  return ListView.builder(
-    itemCount: itemsGroupedByTime.keys.length,
-    itemBuilder: (context, index) {
-      final time =
-          itemsGroupedByTime.keys.elementAt(index);
-      final itemsForTime =
-          itemsGroupedByTime[time]!;
-
-      return Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              time,
-              style: Theme.of(context)
-                  .textTheme
-                  .headline6,
-            ),
-          ),
-          ...itemsForTime.map((scheduleItem) {
-            return EventCard(
-              title: scheduleItem.title,
-              imageUrl: scheduleItem.imageUrl,
-              time: scheduleItem.time,
-              date: scheduleItem.date,
-              location: scheduleItem.location,
+              },
             );
           }).toList(),
-        ],
-      );
-    },
-  );
-}
+        ),
+      ),
+    );
+  }
+
+Widget buildListView(Map<String, List<ScheduleItem>> itemsGroupedByTime, BuildContext context) {
+  var sortedKeys = itemsGroupedByTime.keys.toList()
+    ..sort((a, b) {
+      DateTime timeA = displayFormat.parse(a); // Use displayFormat instead of timeFormat
+      DateTime timeB = displayFormat.parse(b); // Use displayFormat instead of timeFormat
+      return timeA.compareTo(timeB);
+    });
+
+    return ListView.builder(
+      itemCount: sortedKeys.length,
+      itemBuilder: (context, index) {
+        final time = sortedKeys[index];
+        final itemsForTime = itemsGroupedByTime[time]!;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                time,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+            ),
+            ...itemsForTime.map((scheduleItem) {
+              return EventCard(
+                title: scheduleItem.title,
+                imageUrl: scheduleItem.imageUrl,
+                time: scheduleItem.time,
+                date: scheduleItem.date,
+                location: scheduleItem.location,
+              );
+            }).toList(),
+          ],
+        );
+      },
+    );
+  }
 }
 
 class ScheduleItem {
   final String title;
-  final String time;
+  final String time; // Change this back to String
   final String date;
   final String location;
   final String imageUrl;
 
   ScheduleItem({
     required this.title,
-    required this.time,
+    required this.time, // Change this back to String
     required this.date,
     required this.location,
     required this.imageUrl,
@@ -247,8 +252,10 @@ class ScheduleItem {
 
   static Future<ScheduleItem> fromJson(Map<String, dynamic> json,
       DateFormat timeFormat, DateFormat displayFormat) async {
-    final time = timeFormat.parse(json['time'], true);
-    final formattedTime = displayFormat.format(time);
+    final time = timeFormat.parse(json['time'], true); // This is now a DateTime
+
+    // Format the time
+    String formattedTime = displayFormat.format(time);
 
     // Parse the date string into a DateTime object
     DateTime date = DateTime.parse(json['date']);
@@ -265,7 +272,7 @@ class ScheduleItem {
     return ScheduleItem(
       title: json['title'],
       imageUrl: json['imageUrl'] ?? defaultImageUrl,
-      time: formattedTime,
+      time: formattedTime, // Use the formatted time
       date: formattedDate, // Use the formatted date
       location: json['location'],
     );
