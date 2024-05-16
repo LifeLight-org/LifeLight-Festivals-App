@@ -57,7 +57,7 @@ class MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                 child: AspectRatio(
                   aspectRatio: aspectRatio, // Use the calculated aspect ratio
                   child: Image.network(
-                    'https://bjywcdylkgnaxsbgtrpr.supabase.co/storage/v1/object/public/maps/${_selectedfestmap ?? 'HA'}-Map.png',
+                    'https://bjywcdylkgnaxsbgtrpr.supabase.co/storage/v1/object/public/maps/${_selectedfestmap}-Map.png',
                     fit: BoxFit.scaleDown,
                   ),
                 ),

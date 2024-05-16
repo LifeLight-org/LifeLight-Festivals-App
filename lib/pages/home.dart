@@ -40,8 +40,7 @@ class HomePageState extends State<HomePage> {
     {'icon': Icons.info, 'text': 'RESOURCES', 'page': ResourcesPage()},
     {'icon': Icons.shopping_bag, 'text': 'STORE', 'page': StorePage()},
     {
-      'icon': FaIcon(FontAwesomeIcons.solidPaperPlane),
-      'text': 'CONNECT',
+      'text': 'CONNECT CARD',
       'width': 355.0,
       'page': ConnectPage()
     },
@@ -168,7 +167,7 @@ class HomePageState extends State<HomePage> {
         buildPadding(),
         Container(
           height: MediaQuery.of(context).size.height *
-              0.63, // Adjust this value as needed
+              0.60, // Adjust this value as needed
           child: Stack(
             children: [
               GridView.builder(

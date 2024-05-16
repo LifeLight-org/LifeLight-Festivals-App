@@ -21,26 +21,30 @@ class FAQPageState extends State<FAQPage> {
     fetchFAQs();
   }
 
-  Future<void> fetchFAQs() async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? selectedFestival = prefs.getString('selectedFestivalDBPrefix');
-      String tableName = "${selectedFestival ?? defaultFestivalDBPrefix}-faq";
+Future<void> fetchFAQs() async {
+  try {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? selectedFestival = prefs.getString('selectedFestivalDBPrefix');
+    String tableName = "${selectedFestival ?? defaultFestivalDBPrefix}-faq";
 
-      final response = await Supabase.instance.client.from(tableName).select();
+    final response = await Supabase.instance.client.from(tableName).select();
 
-      setState(() {
-        faqItems = (response as List)
-            .map((faq) => FAQItem(
-                section: faq['section'],
-                question: faq['question'],
-                answer: faq['answer']))
-            .toList();
-      });
-    } catch (e) {
-      print('Failed to fetch FAQs: $e');
-    }
+    // Map the response to FAQItem and sort the items by section
+    List<FAQItem> items = (response as List)
+        .map((faq) => FAQItem(
+            section: faq['section'],
+            question: faq['question'],
+            answer: faq['answer']))
+        .toList();
+    items.sort((a, b) => a.section.compareTo(b.section));
+
+    setState(() {
+      faqItems = items;
+    });
+  } catch (e) {
+    print('Failed to fetch FAQs: $e');
   }
+}
 
   @override
   Widget build(BuildContext context) {

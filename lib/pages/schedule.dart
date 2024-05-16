@@ -121,7 +121,6 @@ Future<void> fetchScheduleItems() async {
                   preferredSize: Size.fromHeight(kToolbarHeight),
 
                     child: TabBar(
-                      isScrollable: true,
                       tabs: dates.map((date) => Tab(text: date)).toList(),
                     ),
                 )
@@ -155,7 +154,6 @@ Future<void> fetchScheduleItems() async {
                       child: Column(
                         children: [
                           TabBar(
-                            isScrollable: true,
                             tabs: snapshot.data!
                                 .map((location) => Tab(text: location))
                                 .toList(),

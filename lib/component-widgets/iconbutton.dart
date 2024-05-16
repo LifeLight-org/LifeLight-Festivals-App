@@ -9,15 +9,17 @@ class IconButtonCard extends StatelessWidget {
 
   IconButtonCard({
     Key? key,
-    required this.icon,
+    this.icon, // make icon optional
     required this.text,
     required this.page,
     this.width,
-  })  : assert(icon is IconData || icon is FaIcon),
+  })  : assert(icon is IconData || icon is FaIcon || icon == null), // add null check
         super(key: key);
 
   Widget iconWidget() {
-    if (icon is IconData) {
+    if (icon == null) {
+      return Text(text, style: TextStyle(color: Colors.black, fontSize: 21.0)); // return Text widget if icon is null
+    } else if (icon is IconData) {
       return Icon(icon, size: 50.0, color: Colors.black);
     } else {
       return FaIcon(icon.icon, size: 40.0, color: Colors.black);
@@ -55,6 +57,7 @@ Widget build(BuildContext context) {
           ],
         ),
       ),
+      if (icon != null) // add this if statement to show text only if icon is not null (or not a IconData)
       Text(text, style: TextStyle(color: Colors.white, fontSize: 21.0)),
     ],
   );
