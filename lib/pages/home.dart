@@ -37,7 +37,7 @@ class HomePageState extends State<HomePage> {
       'text': 'KNOW GOD',
       'page': KnowGodPage()
     },
-    {'icon': Icons.info, 'text': 'RESOURCES', 'page': ResourcesPage()},
+    {'icon': Icons.info, 'text': 'IMPACT', 'page': ResourcesPage()},
     {'icon': Icons.shopping_bag, 'text': 'STORE', 'page': StorePage()},
     {
       'text': 'CONNECT CARD',

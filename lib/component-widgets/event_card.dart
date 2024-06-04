@@ -35,11 +35,11 @@ class EventCard extends StatelessWidget {
                     : imageUrl!,
                 fit: BoxFit.cover,
                 width: double.infinity,
-                height: 90.0,
+                height: 200.0,
               ),
               Container(
                 width: double.infinity, // Full width
-                height: 90.0, // Same height as the image
+                height: 200.0, // Same height as the image
                 color:
                     Colors.black.withOpacity(0.5), // Semi-transparent overlay
               ),

@@ -1,28 +1,100 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'connectpage.dart';
 import 'resourcespage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class KnowGodPage extends StatelessWidget {
+  const KnowGodPage({Key? key}) : super(key: key);
+
+
+  // This function launches the URL
+  void _launchAppURL(BuildContext context) async {
+    String url;
+    if (Theme.of(context).platform == TargetPlatform.iOS) {
+      url = 'https://apps.apple.com/us/app/apple-store/id1535457204';
+    } else {
+      url = 'https://play.google.com/store/apps/details?id=org.ptl.app';
+    }
+
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  Future<String> _getFestival() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('selectedFestival') ?? 'default';
+  }
+
+  void _launchFBURL(BuildContext context) async {
+    String festival = await _getFestival();
+    String url;
+    switch (festival) {
+      case 'Hills Alive':
+        url = 'https://www.facebook.com/hillsalive';
+        break;
+      case 'LifeLight Festival':
+        url = 'https://www.facebook.com/LifeLightmovement';
+        break;
+      default:
+        url = 'https://lifelight.org';
+        break;
+    }
+
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  void _launchIGURL(BuildContext context) async {
+    String festival = await _getFestival();
+    String url;
+    switch (festival) {
+      case 'Hills Alive':
+        url = 'https://www.instagram.com/hills.alive/';
+        break;
+      case 'LifeLight Festival':
+        url = 'https://www.instagram.com/lifelightmovement/';
+        break;
+      default:
+        url = 'https://lifelight.org';
+        break;
+    }
+
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Know God'),
+        title: const Text('Know God'),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
+  padding: const EdgeInsets.all(16.0),
+  child: Column(
+    children: <Widget>[
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
+            const Text(
               'HOW TO KNOW GOD',
               style: TextStyle(
                 fontSize: 34,
-                color: Color(0xffFFD000), // Set the color of the text
+                color: Color(0xffFFD000),
               ),
             ),
-            SizedBox(height: 16.0), // Add some spacing
-            Text(
+            const SizedBox(height: 16.0),
+            const Text(
               'The Bible says we can know God through a relationship with his Son Jesus Christ.\n\n'
               'John 17:3 “Now this is eternal life: that they may know you, the only true God, and Jesus Christ, whom you have sent.”\n\n'
               'Not only are believers promised eternal life, but once we receive Christ, the joy of knowing God starts immediately. The life of a Christian may not always be easy, but God through His Spirit will be with you always. Once you are adopted as a child of God you are promised eternal life.\n\n'
@@ -37,7 +109,7 @@ class KnowGodPage extends StatelessWidget {
               'Pray this prayer: Lord Jesus, I know that I am a sinner. I know that you died for my sins and rose again from the dead to save me. Right now, I turn from my sins and open the door of my heart and life. I want you to be my Lord and Master. Jesus, I fully surrender myself to you.\n\n'
               'If you prayed and sincerely meant it in your heart, you are a child of God and have eternal life!\n\n',
               style: TextStyle(
-                fontSize: 20.0, // Increase the text size
+                fontSize: 20.0,
               ),
             ),
             GestureDetector(
@@ -47,35 +119,84 @@ class KnowGodPage extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => ConnectPage()),
                 );
               },
-              child: Text(
+              child: const Text(
                 'Please let us know about your decision to accept Christ here.',
                 style: TextStyle(
                   fontSize: 20.0,
-                  color:
-                      Color(0xffFFD000), // This makes the text look like a link
+                  color: Color(0xffFFD000),
                   decoration: TextDecoration.underline,
                 ),
               ),
             ),
-            SizedBox(height: 35.0), // Add some spacing
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ResourcesPage()),
-                );
-              },
-              child: Text(
-                'For further resources click here.',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  color:
-                      Color(0xffFFD000), // This makes the text look like a link
-                  decoration: TextDecoration.underline,
-                ),
-              ),
-            ),
+            const SizedBox(height: 35.0),
           ],
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _buildSectionTitle('Pocket Testament League'),
+              _buildSectionContent(
+                "The Pocket Testament League app is your digital tool for sharing the message of the Bible. Access digital New Testaments, get tips for effective evangelism.",
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 15.0),
+                child: ElevatedButton(
+                  onPressed: () => _launchAppURL(context),
+                  child: const Text('Open The PTL App'),
+                ),
+              ),
+              _buildSectionTitle('Hope With God'),
+              _buildSectionContent(
+                "Hope With God is an online platform that provides resources and support for individuals seeking spiritual guidance and encouragement. It helps people face life's challenges with faith and hope, providing inspiration, answers, and a supportive community for spiritual growth.",
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 15.0),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    const url = 'https://www.hopewithgod.com';
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      throw 'Could not launch $url';
+                    }
+                  },
+                  child: const Text('Open hopewithgod.com'),
+                ),
+              ),
+            ],
+          ),
+      ),
+    ],
+  ),
+),
+    );
+  }
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20.0),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          color: Color(0xffFFD000), // Change the color of the title
+          decoration: TextDecoration.underline, // Underline the title
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionContent(String content) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10.0),
+      child: Text(
+        content,
+        style: TextStyle(
+          fontSize: 16, // Increase the font size
+          color: Colors.white, // Change the color of the content
+          fontStyle: FontStyle.italic, // Make the content italic
         ),
       ),
     );
