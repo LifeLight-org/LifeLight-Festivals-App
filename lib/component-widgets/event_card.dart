@@ -57,11 +57,26 @@ class EventCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8.0),
+                    Row(
+                      children: [
+                        const Icon(Icons.access_time,
+                            size: 16.0, color: Colors.white),
+                        const SizedBox(width: 8.0),
+                        Text(
+                          time,
+                          style: const TextStyle(
+                            fontSize: 17.0,
+                            color: Colors.white, // Ensure text visibility
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8.0),
                     if (location.isNotEmpty)
                       Row(
                         children: [
                           const Icon(Icons.location_on,
-                              size: 16.0, color: Colors.white),
+                              size: 17.0, color: Colors.white),
                           const SizedBox(width: 8.0),
                           Text(
                             location,

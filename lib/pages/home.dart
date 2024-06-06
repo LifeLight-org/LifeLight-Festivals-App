@@ -57,6 +57,7 @@ class HomePageState extends State<HomePage> {
     final sharedPreferences = await SharedPreferences.getInstance();
     uuid = sharedPreferences.getString('uuid');
     debugPrint('UUID: $uuid');
+    debugPrint('Festival: ${sharedPreferences.getString('selectedFestival')}');
   }
 
   Stream<Map<String, String>> getFestival() async* {

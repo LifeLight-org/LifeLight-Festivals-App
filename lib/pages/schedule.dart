@@ -210,13 +210,6 @@ Widget buildListView(Map<String, List<ScheduleItem>> itemsGroupedByTime, BuildCo
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                time,
-                style: Theme.of(context).textTheme.headline6,
-              ),
-            ),
             ...itemsForTime.map((scheduleItem) {
               return EventCard(
                 title: scheduleItem.title,
