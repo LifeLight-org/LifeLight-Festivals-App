@@ -50,12 +50,12 @@ class FestivalSelectScreen extends StatelessWidget {
               width: 350, // Set a larger width for the cards
               child: FestivalCard(
                 festivalName: 'LifeLight Festival',
-                festivalLogo: 'assets/images/LL-Logo.png',
+                festivalLogo: 'assets/images/LL-Logo-W.png',
                 festivalDBPrefix: 'SF',
                 onFestivalSelected: (festivalLogo, festivalDBPrefix) async {
                   removeUserTag('festival');
                   await setOnboardingStatus('LifeLight Festival',
-                      'assets/images/LL-Logo.png', 'SF', true);
+                      'assets/images/LL-Logo-B.png', 'SF', true);
                   setUserTag('festival', 'Souix Falls Festival');
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => HomePage()),

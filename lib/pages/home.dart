@@ -57,7 +57,7 @@ class HomePageState extends State<HomePage> {
     final sharedPreferences = await SharedPreferences.getInstance();
     uuid = sharedPreferences.getString('uuid');
     debugPrint('UUID: $uuid');
-    debugPrint('Festival: ${sharedPreferences.getString('selectedFestival')}');
+    debugPrint('Festival: ${sharedPreferences.getString('selectedFestivalDBPrefix')}');
   }
 
   Stream<Map<String, String>> getFestival() async* {
@@ -201,25 +201,45 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Hero buildHero(AsyncSnapshot<Map<String, String>> snapshot) {
-    return Hero(
-      tag: 'eventLogo',
-      child: Image.asset(
-        snapshot.data!['logo']!,
-        height: 120,
-        width: double.infinity,
-        fit: BoxFit.contain,
-        errorBuilder: (context, error, stackTrace) {
-          return Image.asset(
-            'assets/images/LL-Logo.png',
-            height: 150,
+Future<double> fetchLogoHeight() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? selectedFestivalDBPrefix = prefs.getString('selectedFestivalDBPrefix');
+
+  if (selectedFestivalDBPrefix == 'SF') {
+    return 85.0;
+  } else {
+    return 125.0;
+  }
+}
+
+Widget buildHero(AsyncSnapshot<Map<String, String>> snapshot) {
+  return FutureBuilder<double>(
+    future: fetchLogoHeight(),
+    builder: (context, logoHeightSnapshot) {
+      if (logoHeightSnapshot.connectionState == ConnectionState.waiting) {
+        return const CircularProgressIndicator();
+      } else {
+        return Hero(
+          tag: 'eventLogo',
+          child: Image.asset(
+            snapshot.data!['logo']!,
+            height: logoHeightSnapshot.data, // use the data from the Future
             width: double.infinity,
             fit: BoxFit.contain,
-          );
-        },
-      ),
-    );
-  }
+            errorBuilder: (context, error, stackTrace) {
+              return Image.asset(
+                'assets/images/LL-Logo.png',
+                height: 150,
+                width: double.infinity,
+                fit: BoxFit.contain,
+              );
+            },
+          ),
+        );
+      }
+    },
+  );
+}
 
   Padding buildPadding() {
     return Padding(
