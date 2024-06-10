@@ -13,6 +13,7 @@ import 'package:lifelight_app/pages/connectpage.dart';
 import 'package:lifelight_app/pages/knowgodpage.dart';
 import 'package:lifelight_app/component-widgets/iconbutton.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lifelight_app/pages/impact.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -24,8 +25,14 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   late Stream<Map<String, String>> festivalData;
   String? uuid;
+  List<Map<String, dynamic>> buttons = []; // Initialize as empty
 
-  final List<Map<String, dynamic>> buttons = [
+Future<void> loadButtons() async {
+  final sharedPreferences = await SharedPreferences.getInstance();
+  final selectedFestivalDBPrefix = sharedPreferences.getString('selectedFestivalDBPrefix');
+
+  // Define the common buttons here
+  buttons = [
     {'icon': Icons.map, 'text': 'MAP', 'page': MapPage()},
     {'icon': Icons.people, 'text': 'ARTISTS', 'page': ArtistLineupPage()},
     {'icon': Icons.calendar_today, 'text': 'SCHEDULE', 'page': SchedulePage()},
@@ -37,8 +44,8 @@ class HomePageState extends State<HomePage> {
       'text': 'KNOW GOD',
       'page': KnowGodPage()
     },
-    {'icon': Icons.info, 'text': 'IMPACT', 'page': ResourcesPage()},
-    {'icon': Icons.shopping_bag, 'text': 'STORE', 'page': StorePage()},
+    {'icon': Icons.info, 'text': 'RESOURCES', 'page': ResourcesPage()},
+    // Conditionally add the IMPACT button
     {
       'text': 'CONNECT CARD',
       'width': 355.0,
@@ -46,11 +53,21 @@ class HomePageState extends State<HomePage> {
     },
   ];
 
+  // Check the condition and add the IMPACT button if necessary
+  if (selectedFestivalDBPrefix != 'SF') {
+    buttons.insert(buttons.length - 1, // Insert before the last item
+      {'icon': Icons.trending_up, 'text': 'IMPACT', 'page': ImpactPage()},
+    );
+  }
+}
+
   @override
   void initState() {
-    super.initState();
     festivalData = getFestival();
+    super.initState();
     loadUuid();
+    loadButtons();
+    
   }
 
   void loadUuid() async {
@@ -204,7 +221,7 @@ class HomePageState extends State<HomePage> {
 Future<double> fetchLogoHeight() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? selectedFestivalDBPrefix = prefs.getString('selectedFestivalDBPrefix');
-
+  print('Selected Festival DB Prefix: $selectedFestivalDBPrefix');
   if (selectedFestivalDBPrefix == 'SF') {
     return 85.0;
   } else {
@@ -221,7 +238,7 @@ Widget buildHero(AsyncSnapshot<Map<String, String>> snapshot) {
       } else {
         return Hero(
           tag: 'eventLogo',
-          child: Image.asset(
+          child: Image.network(
             snapshot.data!['logo']!,
             height: logoHeightSnapshot.data, // use the data from the Future
             width: double.infinity,

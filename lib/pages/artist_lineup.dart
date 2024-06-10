@@ -61,12 +61,11 @@ class Artist {
 
 Future<List<Artist>> fetchArtists() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? selectedFestival = prefs.getString('selectedFestivalDBPrefix');
-  String tableName = "${selectedFestival ?? 'ha'}-artist_lineup";
+  int? selectedFestivalId = prefs.getInt('selectedFestivalId');
   var box = await Hive.openBox('artistBox');
 
   try {
-    final response = await Supabase.instance.client.from(tableName).select('*');
+    final response = await Supabase.instance.client.from("artist_lineup").select('*').eq('festival', selectedFestivalId!);
     List<Artist> artists = List<Artist>.from(
         (response as List).map((item) => Artist.fromJson(item)));
     // Store the artists in Hive
@@ -96,24 +95,24 @@ class ArtistLineupPage extends StatefulWidget {
   ArtistLineupPageState createState() => ArtistLineupPageState();
 }
 
-class ArtistLineupPageState extends State<ArtistLineupPage>
-    with TickerProviderStateMixin {
+class ArtistLineupPageState extends State<ArtistLineupPage> with TickerProviderStateMixin {
   late TabController _dateController = TabController(length: 0, vsync: this);
   final Map<String, TabController> _locationControllers = {};
   List<Artist> _artists = [];
+  bool _isLoading = true; // Step 1: Add a loading state variable
 
   @override
   void initState() {
     super.initState();
+    _isLoading = true; // Step 2: Set loading to true before fetching
     fetchArtists().then((artists) {
       setState(() {
         _artists = artists;
-        _dateController =
-            TabController(length: _getUniqueDates().length, vsync: this);
+        _dateController = TabController(length: _getUniqueDates().length, vsync: this);
         _getUniqueDates().forEach((date) {
-          _locationControllers[date] = TabController(
-              length: _getUniqueLocationsForDate(date).length, vsync: this);
+          _locationControllers[date] = TabController(length: _getUniqueLocationsForDate(date).length, vsync: this);
         });
+        _isLoading = false; // Step 3: Set loading to false after fetching
       });
     });
   }
@@ -154,10 +153,12 @@ class ArtistLineupPageState extends State<ArtistLineupPage>
     var uniqueDates = _getUniqueDates();
     return Scaffold(
       appBar: AppBar(
-        title: Text('Artist Lineup'), // Add this line
+        title: Text('ARTIST LINEUP'),
         bottom: _buildTabBar(uniqueDates, _dateController, formatDate),
       ),
-      body: _buildBody(uniqueDates),
+      body: _isLoading // Step 4: Conditional rendering based on loading state
+          ? Center(child: CircularProgressIndicator()) // Show loading indicator
+          : _buildBody(uniqueDates), // Show actual content
     );
   }
 

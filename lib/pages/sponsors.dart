@@ -13,6 +13,7 @@ class SponsorPage extends StatefulWidget {
 
 class SponsorPageState extends State<SponsorPage> {
   List<Sponsor> sponsors = [];
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -21,11 +22,14 @@ class SponsorPageState extends State<SponsorPage> {
   }
 
   Future<void> fetchSponsors() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? selectedFestival = prefs.getString('selectedFestivalDBPrefix');
-    String tableName = "${selectedFestival ?? 'ha'}-sponsors";
+    setState(() {
+      isLoading = true;
+    });
 
-    final response = await Supabase.instance.client.from(tableName).select('*');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+   int? selectedFestivalId = prefs.getInt('selectedFestivalId');
+
+    final response = await Supabase.instance.client.from("sponsors").select('*').eq("festival", selectedFestivalId!);
 
     if (response.isEmpty) {
       throw Exception('No sponsors found');
@@ -40,6 +44,7 @@ class SponsorPageState extends State<SponsorPage> {
 
     setState(() {
       sponsors = items;
+      isLoading = false;
     });
   }
 
@@ -52,24 +57,26 @@ class SponsorPageState extends State<SponsorPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sponsors'),
+        title: const Text('SPONSORS'),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "Thank You to our incredible sponsors click on their logos below to learn more.",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
+      body: isLoading // Step 3: Check isLoading to decide what to display
+          ? Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Thank You to our incredible sponsors click on their logos below to learn more.",
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Expanded(
+                  child: SponsorGrid(
+                      key: UniqueKey(), sponsors: sponsors, onTap: _handleTap),
+                ),
+              ],
             ),
-          ),
-          Expanded(
-            child: SponsorGrid(
-                key: UniqueKey(), sponsors: sponsors, onTap: _handleTap),
-          ),
-        ],
-      ),
     );
   }
 

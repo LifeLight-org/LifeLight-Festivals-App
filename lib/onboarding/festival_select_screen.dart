@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
-
+import 'package:lifelight_app/supabase_client.dart';
 import 'package:lifelight_app/pages/home.dart';
 
 class FestivalSelectScreen extends StatelessWidget {
@@ -22,6 +22,16 @@ class FestivalSelectScreen extends StatelessWidget {
     return festival;
   }
 
+  Future<List<dynamic>> fetchFestivals() async {
+    final response = await supabase.from('festivals').select();
+    if (response != null) {
+      print(response);
+      return response as List<dynamic>;
+    } else {
+      throw Exception('Failed to load festivals');
+    }
+  }
+
   void setUserTag(String tagKey, String tagValue) async {
     OneSignal.User.addTagWithKey(tagKey, tagValue);
   }
@@ -30,11 +40,13 @@ class FestivalSelectScreen extends StatelessWidget {
     OneSignal.User.removeTag(tagKey);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: Center(
+      child: SingleChildScrollView( // Allows the column to be scrollable
         child: Column(
+          mainAxisSize: MainAxisSize.min, // Ensure the column's content is centered vertically
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
@@ -46,54 +58,56 @@ class FestivalSelectScreen extends StatelessWidget {
                     ),
               ),
             ),
-            SizedBox(
-              width: 350, // Set a larger width for the cards
-              child: FestivalCard(
-                festivalName: 'LifeLight Festival',
-                festivalLogo: 'assets/images/LL-Logo-W.png',
-                festivalDBPrefix: 'SF',
-                onFestivalSelected: (festivalLogo, festivalDBPrefix) async {
-                  removeUserTag('festival');
-                  await setOnboardingStatus('LifeLight Festival',
-                      'assets/images/LL-Logo-B.png', 'SF', true);
-                  setUserTag('festival', 'Souix Falls Festival');
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                    (Route<dynamic> route) => false,
+            FutureBuilder<List<dynamic>>(
+              future: fetchFestivals(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  // Removed Expanded widget to avoid layout issues
+                  return ListView.builder(
+                    shrinkWrap: true, // Makes the ListView take up only as much space as it needs
+                    physics: NeverScrollableScrollPhysics(), // Disables scrolling within the ListView
+                    itemCount: snapshot.data?.length ?? 0,
+                    itemBuilder: (context, index) {
+                      var festival = snapshot.data![index];
+                      return FestivalCard(
+                        festivalName: festival['name'],
+                        festivalLogo: festival['dark_logo_url'],
+                        festivalDBPrefix: festival['short_name'],
+                        onFestivalSelected:
+                            (festivalLogo, festivalDBPrefix) async {
+                          removeUserTag('festival');
+                          await setOnboardingStatus(festival['name'],
+                              festival['light_logo_url'], festival['short_name'], festival['id'], true);
+                          setUserTag('festival', festival['name']);
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                                builder: (context) => HomePage()),
+                            (Route<dynamic> route) => false,
+                          );
+                        },
+                      );
+                    },
                   );
-                },
-              ),
-            ),
-            SizedBox(
-              width: 350, // Set a larger width for the cards
-              child: FestivalCard(
-                festivalName: 'LifeLight Hills Alive',
-                festivalLogo: 'assets/images/HA-Logo-W.png',
-                festivalDBPrefix: 'HA',
-                onFestivalSelected: (festivalLogo, festivalDBPrefix) async {
-                  removeUserTag('festival');
-                  await setOnboardingStatus(
-                      'Hills Alive', 'assets/images/HA-Logo-B.png', 'HA', true);
-                  setUserTag('festival', 'Hills Alive');
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                    (Route<dynamic> route) => false,
-                  );
-                },
-              ),
+                }
+              },
             ),
           ],
         ),
       ),
-    );
-  }
-
+    ),
+  );
+}
   Future<void> setOnboardingStatus(
-      String festivalName, festivalLogo, festivalDBPrefix, bool status) async {
+      String festivalName, festivalLogo, festivalDBPrefix, festivalId, bool status) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('selectedFestival', festivalName);
     await prefs.setString('selectedFestivalLogo', festivalLogo);
     await prefs.setString('selectedFestivalDBPrefix', festivalDBPrefix);
+    await prefs.setInt('selectedFestivalId', festivalId);
     await prefs.setBool('onboarding', status);
   }
 }
@@ -153,7 +167,7 @@ class FestivalCard extends StatelessWidget {
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(10.0),
-                          child: Image.asset(
+                          child: Image.network(
                             festivalLogo,
                             width: 150, // Set a larger width for the image
                             height: 140, // Set a larger height for the image

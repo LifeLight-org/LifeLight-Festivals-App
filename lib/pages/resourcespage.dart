@@ -75,7 +75,7 @@ class ResourcesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Resources'),
+        title: const Text('RESOURCES'),
       ),
       body: SingleChildScrollView(
         child: Padding(

@@ -14,6 +14,7 @@ class FAQPage extends StatefulWidget {
 
 class FAQPageState extends State<FAQPage> {
   List<FAQItem> faqItems = [];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -21,30 +22,37 @@ class FAQPageState extends State<FAQPage> {
     fetchFAQs();
   }
 
-Future<void> fetchFAQs() async {
-  try {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? selectedFestival = prefs.getString('selectedFestivalDBPrefix');
-    String tableName = "${selectedFestival ?? defaultFestivalDBPrefix}-faq";
-
-    final response = await Supabase.instance.client.from(tableName).select();
-
-    // Map the response to FAQItem and sort the items by section
-    List<FAQItem> items = (response as List)
-        .map((faq) => FAQItem(
-            section: faq['section'],
-            question: faq['question'],
-            answer: faq['answer']))
-        .toList();
-    items.sort((a, b) => a.section.compareTo(b.section));
-
+  Future<void> fetchFAQs() async {
     setState(() {
-      faqItems = items;
+      isLoading = true; // Step 2: Set isLoading to true at the start
     });
-  } catch (e) {
-    print('Failed to fetch FAQs: $e');
+
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int? selectedFestivalId = prefs.getInt('selectedFestivalId');
+
+      final response = await Supabase.instance.client.from("faq").select("*").eq("festival", selectedFestivalId!);
+
+      // Map the response to FAQItem and sort the items by section
+      List<FAQItem> items = (response as List)
+          .map((faq) => FAQItem(
+              section: faq['section'],
+              question: faq['question'],
+              answer: faq['answer']))
+          .toList();
+      items.sort((a, b) => a.section.compareTo(b.section));
+
+      setState(() {
+        faqItems = items;
+        isLoading = false; // Step 2: Set isLoading to false after fetching
+      });
+    } catch (e) {
+      print('Failed to fetch FAQs: $e');
+      setState(() {
+        isLoading = false; // Ensure isLoading is set to false on error too
+      });
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -52,53 +60,55 @@ Future<void> fetchFAQs() async {
       appBar: AppBar(
         title: Text('FAQ'),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              children: faqItems.fold(<Widget>[], (previousValue, element) {
-                if (previousValue.isEmpty ||
-                    (previousValue.last as FAQItem).section !=
-                        element.section) {
-                  String sectionTitle;
-                  switch (element.section) {
-                    case 0:
-                      sectionTitle = 'GENERAL INFO';
-                      break;
-                    case 1:
-                      sectionTitle = 'FESTIVAL GUIDELINES';
-                      break;
-                    default:
-                      sectionTitle = 'OTHER';
-                  }
-                  previousValue.add(Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text(
-                      sectionTitle,
-                      style: TextStyle(
-                          fontSize: 18.0, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                  ));
-                }
-                previousValue.add(element);
-                return previousValue;
-              }),
+      body: isLoading // Step 3: Check isLoading to decide what to display
+          ? Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    children: faqItems.fold(<Widget>[], (previousValue, element) {
+                      if (previousValue.isEmpty ||
+                          (previousValue.last as FAQItem).section !=
+                              element.section) {
+                        String sectionTitle;
+                        switch (element.section) {
+                          case 0:
+                            sectionTitle = 'GENERAL INFO';
+                            break;
+                          case 1:
+                            sectionTitle = 'FESTIVAL GUIDELINES';
+                            break;
+                          default:
+                            sectionTitle = 'OTHER';
+                        }
+                        previousValue.add(Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text(
+                            sectionTitle,
+                            style: TextStyle(
+                                fontSize: 18.0, fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                        ));
+                      }
+                      previousValue.add(element);
+                      return previousValue;
+                    }),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    'NO VIDEO OR AUDIO RECORDINGS ON FESTIVAL GROUNDS',
+                    style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'NO VIDEO OR AUDIO RECORDINGS ON FESTIVAL GROUNDS',
-              style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

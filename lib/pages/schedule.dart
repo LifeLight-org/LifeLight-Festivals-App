@@ -19,11 +19,12 @@ class SchedulePageState extends State<SchedulePage> {
   List<String> dates = [];
   final timeFormat = DateFormat('HH:mm:ss');
   final displayFormat = DateFormat('h:mm a');
+  bool isLoading = false;
 
   Future<List<String>> fetchDates() async {
-    String tableName = "$selectedFestival-schedule";
+    int? selectedFestivalId = prefs.getInt('selectedFestivalId');
     final response =
-        await Supabase.instance.client.from(tableName).select('date');
+        await Supabase.instance.client.from("schedule").select('date').eq("festival", selectedFestivalId!);
 
     if (response == null) {
       throw Exception('Error fetching dates');
@@ -53,6 +54,7 @@ class SchedulePageState extends State<SchedulePage> {
   @override
   void initState() {
     super.initState();
+    isLoading = false;
     initialize();
   }
 
@@ -67,35 +69,40 @@ class SchedulePageState extends State<SchedulePage> {
     selectedFestival = prefs.getString('selectedFestivalDBPrefix') ?? 'ha';
   }
 
-Future<void> fetchScheduleItems() async {
-  String tableName = "$selectedFestival-schedule";
+  Future<void> fetchScheduleItems() async {
+    setState(() {
+      isLoading = true; // Step 3: Set the loading state to true before fetching
+    });
+    int? selectedFestivalId = prefs.getInt('selectedFestivalId');
+    final response = await Supabase.instance.client.from("schedule").select('*').eq('festival', selectedFestivalId!);
 
-  final response = await Supabase.instance.client.from(tableName).select('*');
+    if (response.isEmpty) {
+      throw Exception('No artists found');
+    }
 
-  if (response.isEmpty) {
-    throw Exception('No artists found');
+    List<ScheduleItem> items = await Future.wait(response
+        .map((item) => ScheduleItem.fromJson(item, timeFormat, displayFormat))
+        .toList());
+
+    items.sort((a, b) {
+      DateTime timeA = displayFormat.parse(a.time);
+      DateTime timeB = displayFormat.parse(b.time);
+      return timeA.compareTo(timeB);
+    });
+
+    setState(() {
+      scheduleItems = items;
+      isLoading = false; // Step 4: Reset the loading state after fetching
+    });
   }
 
-  List<ScheduleItem> items = await Future.wait(response
-      .map((item) => ScheduleItem.fromJson(item, timeFormat, displayFormat))
-      .toList());
-
-  // Sort the items by time
-  items.sort((a, b) {
-    DateTime timeA = displayFormat.parse(a.time); // Use displayFormat instead of timeFormat
-    DateTime timeB = displayFormat.parse(b.time); // Use displayFormat instead of timeFormat
-    return timeA.compareTo(timeB); // Compare DateTime objects
-  });
-
-  setState(() {
-    scheduleItems = items;
-  });
-}
-
   Future<List<String>> fetchLocations(String date) async {
-    String tableName = "$selectedFestival-schedule";
-    final response =
-        await Supabase.instance.client.from(tableName).select('location');
+    int? selectedFestivalId = prefs.getInt('selectedFestivalId');
+
+    final response = await Supabase.instance.client
+        .from("schedule")
+        .select('location')
+        .eq("festival", selectedFestivalId!);
 
     // Extract the locations and remove duplicates
     List<String> locations =
@@ -115,14 +122,13 @@ Future<void> fetchScheduleItems() async {
       length: dates.length,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Schedule'),
+          title: const Text('SCHEDULE'),
           bottom: dates.length > 1
               ? PreferredSize(
                   preferredSize: Size.fromHeight(kToolbarHeight),
-
-                    child: TabBar(
-                      tabs: dates.map((date) => Tab(text: date)).toList(),
-                    ),
+                  child: TabBar(
+                    tabs: dates.map((date) => Tab(text: date)).toList(),
+                  ),
                 )
               : null,
         ),
@@ -132,6 +138,7 @@ Future<void> fetchScheduleItems() async {
               future: fetchLocations(date),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
+                  // This is where the loading indicator is shown
                   return Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
@@ -193,13 +200,16 @@ Future<void> fetchScheduleItems() async {
     );
   }
 
-Widget buildListView(Map<String, List<ScheduleItem>> itemsGroupedByTime, BuildContext context) {
-  var sortedKeys = itemsGroupedByTime.keys.toList()
-    ..sort((a, b) {
-      DateTime timeA = displayFormat.parse(a); // Use displayFormat instead of timeFormat
-      DateTime timeB = displayFormat.parse(b); // Use displayFormat instead of timeFormat
-      return timeA.compareTo(timeB);
-    });
+  Widget buildListView(Map<String, List<ScheduleItem>> itemsGroupedByTime,
+      BuildContext context) {
+    var sortedKeys = itemsGroupedByTime.keys.toList()
+      ..sort((a, b) {
+        DateTime timeA =
+            displayFormat.parse(a); // Use displayFormat instead of timeFormat
+        DateTime timeB =
+            displayFormat.parse(b); // Use displayFormat instead of timeFormat
+        return timeA.compareTo(timeB);
+      });
 
     return ListView.builder(
       itemCount: sortedKeys.length,

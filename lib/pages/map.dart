@@ -37,7 +37,7 @@ class MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Map'),
+        title: const Text('MAP'),
       ),
       body: Stack(
         children: [
@@ -59,6 +59,19 @@ class MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                   child: Image.network(
                     'https://bjywcdylkgnaxsbgtrpr.supabase.co/storage/v1/object/public/maps/${_selectedfestmap}-Map.png',
                     fit: BoxFit.scaleDown,
+                    loadingBuilder: (BuildContext context, Widget child,
+                        ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null)
+                        return child; // Image has finished loading
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : null, // Display the loading progress
+                        ),
+                      );
+                    },
                   ),
                 ),
               );

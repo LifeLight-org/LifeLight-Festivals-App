@@ -14,7 +14,7 @@ class _ConnectPageState extends State<ConnectPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Connect'),
+        title: Text('Connect Card'),
       ),
       body: Stack(
         children: [

@@ -14,12 +14,10 @@ import 'package:lifelight_app/models/cart.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:geolocator/geolocator.dart';
-import 'dart:async';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:lifelight_app/component-widgets/advert.dart';
+import 'package:lifelight_app/geo_fence.dart';
 
 void main() async {
+  
   await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -76,13 +74,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     //    WidgetsBinding.instance?.addPostFrameCallback((_) {
     //      showDialog(
     //        context: context,
     //        builder: (context) => SponsorAd(),
     //      );
     //    });
+
+    //WidgetsBinding.instance.addPostFrameCallback((_) {
+    //  GeoFenceService().start();
+    //});
 
     Widget initialScreen;
 
