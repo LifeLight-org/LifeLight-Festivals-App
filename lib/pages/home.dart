@@ -187,8 +187,8 @@ class HomePageState extends State<HomePage> {
         buildPadding(),
         Container(
           height: MediaQuery.of(context).size.shortestSide < 600
-              ? MediaQuery.of(context).size.height * 0.60 // For phones
-              : MediaQuery.of(context).size.height * 0.70, // For tablets
+              ? MediaQuery.of(context).size.height * 0.65 // For phones
+              : MediaQuery.of(context).size.height * 0.75, // For tablets
           child: Stack(
             children: [
               GridView.builder(
