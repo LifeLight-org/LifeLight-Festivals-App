@@ -6,7 +6,7 @@
 	<string>development</string>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.org.lifelight.lifelightFestivalsApp.onesignal</string>
+		<string>group.org.lifelight.app.onesignal</string>
 	</array>
 </dict>
 </plist>
