@@ -27,39 +27,41 @@ class HomePageState extends State<HomePage> {
   String? uuid;
   List<Map<String, dynamic>> buttons = []; // Initialize as empty
 
-Future<void> loadButtons() async {
-  final sharedPreferences = await SharedPreferences.getInstance();
-  final selectedFestivalDBPrefix = sharedPreferences.getString('selectedFestivalDBPrefix');
+  Future<void> loadButtons() async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    final selectedFestivalDBPrefix =
+        sharedPreferences.getString('selectedFestivalDBPrefix');
 
-  // Define the common buttons here
-  buttons = [
-    {'icon': Icons.map, 'text': 'MAP', 'page': MapPage()},
-    {'icon': Icons.people, 'text': 'ARTISTS', 'page': ArtistLineupPage()},
-    {'icon': Icons.calendar_today, 'text': 'SCHEDULE', 'page': SchedulePage()},
-    {'icon': Icons.star, 'text': 'SPONSORS', 'page': SponsorPage()},
-    {'icon': Icons.question_mark, 'text': 'FAQ', 'page': FAQPage()},
-    {'icon': Icons.monetization_on, 'text': 'DONATE', 'page': DonatePage()},
-    {
-      'icon': FaIcon(FontAwesomeIcons.handsPraying),
-      'text': 'KNOW GOD',
-      'page': KnowGodPage()
-    },
-    {'icon': Icons.info, 'text': 'RESOURCES', 'page': ResourcesPage()},
-    // Conditionally add the IMPACT button
-    {
-      'text': 'CONNECT CARD',
-      'width': 355.0,
-      'page': ConnectPage()
-    },
-  ];
+    // Define the common buttons here
+    buttons = [
+      {'icon': Icons.map, 'text': 'MAP', 'page': MapPage()},
+      {'icon': Icons.people, 'text': 'ARTISTS', 'page': ArtistLineupPage()},
+      {
+        'icon': Icons.calendar_today,
+        'text': 'SCHEDULE',
+        'page': SchedulePage()
+      },
+      {'icon': Icons.star, 'text': 'SPONSORS', 'page': SponsorPage()},
+      {'icon': Icons.question_mark, 'text': 'FAQ', 'page': FAQPage()},
+      {'icon': Icons.monetization_on, 'text': 'DONATE', 'page': DonatePage()},
+      {
+        'icon': FaIcon(FontAwesomeIcons.handsPraying),
+        'text': 'KNOW GOD',
+        'page': KnowGodPage()
+      },
+      {'icon': Icons.info, 'text': 'RESOURCES', 'page': ResourcesPage()},
+      // Conditionally add the IMPACT button
+      {'text': 'CONNECT CARD', 'width': 355.0, 'page': ConnectPage()},
+    ];
 
-  // Check the condition and add the IMPACT button if necessary
-  if (selectedFestivalDBPrefix != 'SF') {
-    buttons.insert(buttons.length - 1, // Insert before the last item
-      {'icon': Icons.trending_up, 'text': 'IMPACT', 'page': ImpactPage()},
-    );
+    // Check the condition and add the IMPACT button if necessary
+    if (selectedFestivalDBPrefix != 'LL') {
+      buttons.insert(
+        buttons.length - 1, // Insert before the last item
+        {'icon': Icons.trending_up, 'text': 'IMPACT', 'page': ImpactPage()},
+      );
+    }
   }
-}
 
   @override
   void initState() {
@@ -67,14 +69,14 @@ Future<void> loadButtons() async {
     super.initState();
     loadUuid();
     loadButtons();
-    
   }
 
   void loadUuid() async {
     final sharedPreferences = await SharedPreferences.getInstance();
     uuid = sharedPreferences.getString('uuid');
     debugPrint('UUID: $uuid');
-    debugPrint('Festival: ${sharedPreferences.getString('selectedFestivalDBPrefix')}');
+    debugPrint(
+        'Festival: ${sharedPreferences.getString('selectedFestivalDBPrefix')}');
   }
 
   Stream<Map<String, String>> getFestival() async* {
@@ -184,8 +186,9 @@ Future<void> loadButtons() async {
         if (snapshot.data!['logo']!.isNotEmpty) buildHero(snapshot),
         buildPadding(),
         Container(
-          height: MediaQuery.of(context).size.height *
-              0.60, // Adjust this value as needed
+          height: MediaQuery.of(context).size.shortestSide < 600
+              ? MediaQuery.of(context).size.height * 0.60 // For phones
+              : MediaQuery.of(context).size.height * 0.70, // For tablets
           child: Stack(
             children: [
               GridView.builder(
@@ -218,45 +221,46 @@ Future<void> loadButtons() async {
     );
   }
 
-Future<double> fetchLogoHeight() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? selectedFestivalDBPrefix = prefs.getString('selectedFestivalDBPrefix');
-  print('Selected Festival DB Prefix: $selectedFestivalDBPrefix');
-  if (selectedFestivalDBPrefix == 'SF') {
-    return 85.0;
-  } else {
-    return 125.0;
+  Future<double> fetchLogoHeight() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? selectedFestivalDBPrefix =
+        prefs.getString('selectedFestivalDBPrefix');
+    print('Selected Festival DB Prefix: $selectedFestivalDBPrefix');
+    if (selectedFestivalDBPrefix == 'LL') {
+      return 85.0;
+    } else {
+      return 125.0;
+    }
   }
-}
 
-Widget buildHero(AsyncSnapshot<Map<String, String>> snapshot) {
-  return FutureBuilder<double>(
-    future: fetchLogoHeight(),
-    builder: (context, logoHeightSnapshot) {
-      if (logoHeightSnapshot.connectionState == ConnectionState.waiting) {
-        return const CircularProgressIndicator();
-      } else {
-        return Hero(
-          tag: 'eventLogo',
-          child: Image.network(
-            snapshot.data!['logo']!,
-            height: logoHeightSnapshot.data, // use the data from the Future
-            width: double.infinity,
-            fit: BoxFit.contain,
-            errorBuilder: (context, error, stackTrace) {
-              return Image.asset(
-                'assets/images/LL-Logo.png',
-                height: 150,
-                width: double.infinity,
-                fit: BoxFit.contain,
-              );
-            },
-          ),
-        );
-      }
-    },
-  );
-}
+  Widget buildHero(AsyncSnapshot<Map<String, String>> snapshot) {
+    return FutureBuilder<double>(
+      future: fetchLogoHeight(),
+      builder: (context, logoHeightSnapshot) {
+        if (logoHeightSnapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else {
+          return Hero(
+            tag: 'eventLogo',
+            child: Image.network(
+              snapshot.data!['logo']!,
+              height: logoHeightSnapshot.data, // use the data from the Future
+              width: double.infinity,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) {
+                return Image.asset(
+                  'assets/images/LL-Logo.png',
+                  height: 150,
+                  width: double.infinity,
+                  fit: BoxFit.contain,
+                );
+              },
+            ),
+          );
+        }
+      },
+    );
+  }
 
   Padding buildPadding() {
     return Padding(

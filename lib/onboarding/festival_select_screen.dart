@@ -23,7 +23,7 @@ class FestivalSelectScreen extends StatelessWidget {
   }
 
   Future<List<dynamic>> fetchFestivals() async {
-    final response = await supabase.from('festivals').select();
+    final response = await supabase.from('festivals').select().eq('active', true);
     if (response != null) {
       print(response);
       return response as List<dynamic>;
@@ -82,7 +82,7 @@ Widget build(BuildContext context) {
                           removeUserTag('festival');
                           await setOnboardingStatus(festival['name'],
                               festival['light_logo_url'], festival['short_name'], festival['id'], true);
-                          setUserTag('festival', festival['name']);
+                          setUserTag('festival', festival['short_name']);
                           Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(
                                 builder: (context) => HomePage()),

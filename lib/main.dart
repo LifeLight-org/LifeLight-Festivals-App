@@ -94,6 +94,7 @@ class MyApp extends StatelessWidget {
     }
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: theme,
       home: initialScreen,
       builder: EasyLoading.init(),
