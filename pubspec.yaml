@@ -34,6 +34,7 @@ dependencies:
   background_location: ^0.13.0
   permission_handler: ^11.3.1
   flutter_background_service: ^5.0.5
+  flutter_platform_widgets: ^7.0.0
 
 dev_dependencies:
   flutter_test:
