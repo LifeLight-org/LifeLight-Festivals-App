@@ -13,8 +13,6 @@ import 'package:lifelight_app/pages/connectpage.dart';
 import 'package:lifelight_app/pages/knowgodpage.dart';
 import 'package:lifelight_app/component-widgets/iconbutton.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:lifelight_app/pages/impact.dart';
-import 'package:lifelight_app/pages/impact_popup.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -26,40 +24,54 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   late Stream<Map<String, String>> festivalData;
   String? uuid;
+  String? festivalShortName;
   List<Map<String, dynamic>> buttons = []; // Initialize as empty
-
+  
   Future<void> loadButtons() async {
     final sharedPreferences = await SharedPreferences.getInstance();
     final selectedFestivalDBPrefix =
         sharedPreferences.getString('selectedFestivalDBPrefix');
 
+  String getDonateUrl() {
+    switch (selectedFestivalDBPrefix) {
+      case 'HA':
+        return 'https://lifelight.breezechms.com/give/online/?fund_id=1822623';
+      case 'LL':
+        return 'https://lifelight.breezechms.com/give/online/?fund_id=1827270';
+      default:
+        return 'https://lifelight.breezechms.com/give/online';
+    }
+  }
+
     // Define the common buttons here
     buttons = [
-      {'icon': Icons.map, 'text': 'MAP', 'page': MapPage()},
-      {'icon': Icons.people, 'text': 'ARTISTS', 'page': ArtistLineupPage()},
+      {'icon': Icons.map, 'type': NavigationType.page, 'text': 'MAP', 'page': MapPage()},
+      {'icon': Icons.people, 'type': NavigationType.page, 'text': 'ARTISTS', 'page': ArtistLineupPage()},
       {
         'icon': Icons.calendar_today,
         'text': 'SCHEDULE',
+        'type': NavigationType.page,
         'page': SchedulePage()
       },
-      {'icon': Icons.star, 'text': 'SPONSORS', 'page': SponsorPage()},
-      {'icon': Icons.question_mark, 'text': 'FAQ', 'page': FAQPage()},
-      {'icon': Icons.monetization_on, 'text': 'DONATE', 'page': DonatePage()},
+      {'icon': Icons.star, 'type': NavigationType.page, 'text': 'SPONSORS', 'page': SponsorPage()},
+      {'icon': Icons.question_mark, 'type': NavigationType.page, 'text': 'FAQ', 'page': FAQPage()},
+      {'icon': Icons.monetization_on, 'type': NavigationType.webBrowser, 'url': getDonateUrl(), 'text': 'DONATE'},
       {
         'icon': FaIcon(FontAwesomeIcons.handsPraying),
+        'type': NavigationType.page,
         'text': 'KNOW GOD',
         'page': KnowGodPage()
       },
-      {'icon': Icons.info, 'text': 'RESOURCES', 'page': ResourcesPage()},
+      {'icon': Icons.info, 'type': NavigationType.page, 'text': 'RESOURCES', 'page': ResourcesPage()},
       // Conditionally add the IMPACT button
-      {'text': 'CONNECT CARD', 'width': 355.0, 'page': ConnectPage()},
+      {'text': 'CONNECT CARD', 'type': NavigationType.page, 'width': 355.0, 'page': ConnectPage()},
     ];
 
     // Check the condition and add the IMPACT button if necessary
     if (selectedFestivalDBPrefix != 'LL') {
       buttons.insert(
         buttons.length - 1, // Insert before the last item
-        {'icon': Icons.trending_up, 'text': 'IMPACT', 'page': ImpactPage()},
+        {'icon': Icons.trending_up, 'type': NavigationType.webBrowser, 'url': 'https://lifelight.breezechms.com/give/online/?fund_id=1882935&frequency=M', 'text': 'IMPACT'},
       );
     }
   }
@@ -69,7 +81,6 @@ class HomePageState extends State<HomePage> {
     festivalData = getFestival();
     super.initState();
     loadUuid();
-    loadButtons();
   }
 
   void loadUuid() async {
@@ -78,6 +89,7 @@ class HomePageState extends State<HomePage> {
     debugPrint('UUID: $uuid');
     debugPrint(
         'Festival: ${sharedPreferences.getString('selectedFestivalDBPrefix')}');
+            loadButtons();
   }
 
   Stream<Map<String, String>> getFestival() async* {
@@ -200,6 +212,8 @@ class HomePageState extends State<HomePage> {
                 itemBuilder: (BuildContext context, int index) {
                   return IconButtonCard(
                     icon: buttons[index]['icon'],
+                    navigationType: buttons[index]['type'],
+                    url: buttons[index]['url'],
                     text: buttons[index]['text'],
                     page: buttons[index]['page'],
                   );
@@ -210,6 +224,7 @@ class HomePageState extends State<HomePage> {
                 alignment: Alignment.bottomCenter,
                 child: IconButtonCard(
                   icon: buttons[buttons.length - 1]['icon'],
+                  navigationType: buttons[buttons.length - 1]['type'],
                   text: buttons[buttons.length - 1]['text'],
                   width: buttons[buttons.length - 1]['width'],
                   page: buttons[buttons.length - 1]['page'],
@@ -222,21 +237,10 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Future<double> fetchLogoHeight() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? selectedFestivalDBPrefix =
-        prefs.getString('selectedFestivalDBPrefix');
-    print('Selected Festival DB Prefix: $selectedFestivalDBPrefix');
-    if (selectedFestivalDBPrefix == 'LL') {
-      return 85.0;
-    } else {
-      return 125.0;
-    }
-  }
 
   Widget buildHero(AsyncSnapshot<Map<String, String>> snapshot) {
     return FutureBuilder<double>(
-      future: fetchLogoHeight(),
+      future: Future<double>.value(MediaQuery.of(context).size.height * 0.16),
       builder: (context, logoHeightSnapshot) {
         if (logoHeightSnapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
