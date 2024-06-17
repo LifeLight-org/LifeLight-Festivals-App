@@ -50,6 +50,7 @@ void main() async {
 
   runApp(
     MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: theme,
       home: OverlaySupport(
         child: ChangeNotifierProvider(
@@ -94,7 +95,7 @@ class MyApp extends StatelessWidget {
     }
 
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false,  // Add this line
       theme: theme,
       home: initialScreen,
       builder: EasyLoading.init(),
