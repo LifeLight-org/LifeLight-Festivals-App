@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart'; // Import for opening a web browser
+import 'package:auto_size_text/auto_size_text.dart';
+
 
 // Step 1: Update the enum to include a web browser option
 enum NavigationType { page, popup, webBrowser }
@@ -84,7 +86,14 @@ class IconButtonCard extends StatelessWidget {
           ),
         ),
         if (icon != null) // Show text only if icon is not null
-        Text(text, style: TextStyle(color: Colors.white, fontSize: 21.0)),
+        AutoSizeText(
+  text, 
+  style: TextStyle(color: Colors.white, fontSize: 18.0),
+  minFontSize: 10, // Minimum text size
+  stepGranularity: 1, // The step size for scaling the font
+  maxLines: 1, // Ensures the text does not wrap
+  overflow: TextOverflow.ellipsis, // Adds an ellipsis if the text still overflows
+),
       ],
     );
   }

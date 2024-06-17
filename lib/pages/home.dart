@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lifelight_app/pages/artist_lineup.dart';
-import 'package:lifelight_app/pages/store.dart';
-import 'package:lifelight_app/pages/donate.dart';
 import 'package:lifelight_app/pages/map.dart';
 import 'package:lifelight_app/pages/schedule.dart';
 import 'package:lifelight_app/pages/settings.dart';
@@ -13,6 +11,8 @@ import 'package:lifelight_app/pages/connectpage.dart';
 import 'package:lifelight_app/pages/knowgodpage.dart';
 import 'package:lifelight_app/component-widgets/iconbutton.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -267,27 +267,31 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Padding buildPadding() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 3.0),
-      child: Text(
-        'BRINGING LIGHT INTO DARKNESS',
-        style: TextStyle(
-          fontFamily: 'HelveticaNeueLT',
-          fontSize: 19,
-          letterSpacing: -2.0,
-          foreground: Paint()
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 0.5
-            ..color = Colors.white,
-          shadows: const [
-            Shadow(
-              offset: Offset(0.5, 0.5),
-              color: Colors.black,
-            ),
-          ],
-        ),
+Padding buildPadding() {
+  return Padding(
+    padding: const EdgeInsets.only(top: 3.0),
+    child: AutoSizeText(
+      'BRINGING LIGHT INTO DARKNESS',
+      style: TextStyle(
+        fontFamily: 'HelveticaNeueLT',
+        fontSize: 20,
+        letterSpacing: -2.0,
+        foreground: Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 0.5
+          ..color = Colors.white,
+        shadows: const [
+          Shadow(
+            offset: Offset(0.5, 0.5),
+            color: Colors.black,
+          ),
+        ],
       ),
-    );
-  }
+      minFontSize: 10, // Minimum text size
+      stepGranularity: 1, // The step size for scaling the font
+      maxLines: 1, // Ensures the text does not wrap
+      overflow: TextOverflow.ellipsis, // Adds an ellipsis if the text still overflows
+    ),
+  );
+}
 }
