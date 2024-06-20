@@ -55,7 +55,7 @@ class HomePageState extends State<HomePage> {
       },
       {'icon': Icons.star, 'type': NavigationType.page, 'text': 'SPONSORS', 'page': SponsorPage()},
       {'icon': Icons.question_mark, 'type': NavigationType.page, 'text': 'FAQ', 'page': FAQPage()},
-      {'icon': Icons.monetization_on, 'type': NavigationType.webBrowser, 'url': getDonateUrl(), 'text': 'DONATE'},
+      {'icon': Icons.attach_money, 'type': NavigationType.webBrowser, 'url': getDonateUrl(), 'text': 'DONATE'},
       {
         'icon': FaIcon(FontAwesomeIcons.handsPraying),
         'type': NavigationType.page,
@@ -64,14 +64,14 @@ class HomePageState extends State<HomePage> {
       },
       {'icon': Icons.info, 'type': NavigationType.page, 'text': 'RESOURCES', 'page': ResourcesPage()},
       // Conditionally add the IMPACT button
-      {'text': 'CONNECT CARD', 'type': NavigationType.page, 'width': 355.0, 'page': ConnectPage()},
+      {'text': 'CONNECT CARD', 'type': NavigationType.webBrowser, 'url': 'https://lifelight.breezechms.com/form/23d1f1', 'width': MediaQuery.of(context).size.width * 0.9},
     ];
 
     // Check the condition and add the IMPACT button if necessary
     if (selectedFestivalDBPrefix != 'LL') {
       buttons.insert(
         buttons.length - 1, // Insert before the last item
-        {'icon': Icons.trending_up, 'type': NavigationType.webBrowser, 'url': 'https://lifelight.breezechms.com/give/online/?fund_id=1882935&frequency=M', 'text': 'IMPACT'},
+        {'icon': Icons.currency_exchange, 'type': NavigationType.webBrowser, 'url': 'https://lifelight.breezechms.com/give/online/?fund_id=1882935&frequency=M', 'text': 'IMPACT'},
       );
     }
   }
@@ -225,6 +225,7 @@ class HomePageState extends State<HomePage> {
                 child: IconButtonCard(
                   icon: buttons[buttons.length - 1]['icon'],
                   navigationType: buttons[buttons.length - 1]['type'],
+                  url: buttons[buttons.length - 1]['url'],
                   text: buttons[buttons.length - 1]['text'],
                   width: buttons[buttons.length - 1]['width'],
                   page: buttons[buttons.length - 1]['page'],

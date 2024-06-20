@@ -129,7 +129,6 @@ class FestivalCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity, // Set the container width to match the parent
       child: Card(
         child: ClipRRect(
           borderRadius:

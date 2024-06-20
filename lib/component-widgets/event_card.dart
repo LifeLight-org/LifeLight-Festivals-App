@@ -6,6 +6,7 @@ class EventCard extends StatelessWidget {
   final String time;
   final String location;
   final String? imageUrl;
+  final VoidCallback? onTap; // Add this line
 
   const EventCard({
     super.key,
@@ -13,12 +14,14 @@ class EventCard extends StatelessWidget {
     required this.date,
     required this.time,
     required this.location,
-    this.imageUrl = '', // Default value
+    this.imageUrl = '',
+    this.onTap, // Add this line
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      onTap: onTap, // Use the callback here
       child: Card(
         margin: const EdgeInsets.all(8.0),
         elevation: 2.0,

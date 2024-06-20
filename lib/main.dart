@@ -14,10 +14,9 @@ import 'package:lifelight_app/models/cart.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:lifelight_app/geo_fence.dart';
+import 'package:upgrader/upgrader.dart';
 
 void main() async {
-  
   await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -52,12 +51,14 @@ void main() async {
     MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: theme,
-      home: OverlaySupport(
-        child: ChangeNotifierProvider(
-          create: (context) => Cart(),
-          child: MyApp(
-            theme: theme,
-            hasOnboarded: hasOnboarded,
+      home: UpgradeAlert(
+        child: OverlaySupport(
+          child: ChangeNotifierProvider(
+            create: (context) => Cart(),
+            child: MyApp(
+              theme: theme,
+              hasOnboarded: hasOnboarded,
+            ),
           ),
         ),
       ),
@@ -95,7 +96,7 @@ class MyApp extends StatelessWidget {
     }
 
     return MaterialApp(
-      debugShowCheckedModeBanner: false,  // Add this line
+      debugShowCheckedModeBanner: false, // Add this line
       theme: theme,
       home: initialScreen,
       builder: EasyLoading.init(),

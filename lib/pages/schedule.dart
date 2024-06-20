@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:lifelight_app/component-widgets/event_card.dart';
@@ -23,8 +24,10 @@ class SchedulePageState extends State<SchedulePage> {
 
   Future<List<String>> fetchDates() async {
     int? selectedFestivalId = prefs.getInt('selectedFestivalId');
-    final response =
-        await Supabase.instance.client.from("schedule").select('date').eq("festival", selectedFestivalId!);
+    final response = await Supabase.instance.client
+        .from("schedule")
+        .select('date')
+        .eq("festival", selectedFestivalId!);
 
     if (response == null) {
       throw Exception('Error fetching dates');
@@ -74,7 +77,10 @@ class SchedulePageState extends State<SchedulePage> {
       isLoading = true; // Step 3: Set the loading state to true before fetching
     });
     int? selectedFestivalId = prefs.getInt('selectedFestivalId');
-    final response = await Supabase.instance.client.from("schedule").select('*').eq('festival', selectedFestivalId!);
+    final response = await Supabase.instance.client
+        .from("schedule")
+        .select('*')
+        .eq('festival', selectedFestivalId!);
 
     if (response.isEmpty) {
       throw Exception('No artists found');
@@ -227,6 +233,11 @@ class SchedulePageState extends State<SchedulePage> {
                 time: scheduleItem.time,
                 date: scheduleItem.date,
                 location: scheduleItem.location,
+                onTap: () {
+                  // Implement the logic to add the event to the user's schedule
+                  // For example, add the scheduleItem to a list or save it in shared preferences
+                  addToUserSchedule(scheduleItem);
+                },
               );
             }).toList(),
           ],
@@ -234,18 +245,34 @@ class SchedulePageState extends State<SchedulePage> {
       },
     );
   }
+
+  void addToUserSchedule(ScheduleItem item) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Assuming ScheduleItem has a method to convert to Map
+    // If not, you'll need to implement it based on your ScheduleItem fields
+    String itemJson = jsonEncode(item.toMap());
+
+    // Retrieve existing schedule items from shared preferences
+    List<String> scheduleList = prefs.getStringList('userSchedule') ?? [];
+
+    // Add the new item
+    scheduleList.add(itemJson);
+    // Save the updated list back to shared preferences
+    await prefs.setStringList('userSchedule', scheduleList);
+  }
 }
 
 class ScheduleItem {
   final String title;
-  final String time; // Change this back to String
+  final String time;
   final String date;
   final String location;
   final String imageUrl;
 
   ScheduleItem({
     required this.title,
-    required this.time, // Change this back to String
+    required this.time,
     required this.date,
     required this.location,
     required this.imageUrl,
@@ -253,29 +280,44 @@ class ScheduleItem {
 
   static Future<ScheduleItem> fromJson(Map<String, dynamic> json,
       DateFormat timeFormat, DateFormat displayFormat) async {
-    final time = timeFormat.parse(json['time'], true); // This is now a DateTime
+    final DateTime time =
+        timeFormat.parse(json['time'], true); // This is now a DateTime
 
     // Format the time
-    String formattedTime = displayFormat.format(time);
+    final String formattedTime = displayFormat.format(time);
 
     // Parse the date string into a DateTime object
-    DateTime date = DateTime.parse(json['date']);
+    final DateTime date = DateTime.parse(json['date']);
 
     // Format the date
-    DateFormat dateFormat = DateFormat('EEEE, MMM d');
-    String formattedDate = dateFormat.format(date);
+    final DateFormat dateFormat = DateFormat('EEEE, MMM d');
+    final String formattedDate = dateFormat.format(date);
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? selectedFestival = prefs.getString('selectedFestivalDBPrefix');
-    String defaultImageUrl =
+    final String? selectedFestival =
+        prefs.getString('selectedFestivalDBPrefix');
+    final String defaultImageUrl =
         "https://bjywcdylkgnaxsbgtrpr.supabase.co/storage/v1/object/public/temp_images/${selectedFestival ?? 'HA'}-arial.jpg";
 
+    // Use formattedTime, formattedDate, and defaultImageUrl in creating a new ScheduleItem
     return ScheduleItem(
       title: json['title'],
-      imageUrl: json['imageUrl'] ?? defaultImageUrl,
-      time: formattedTime, // Use the formatted time
-      date: formattedDate, // Use the formatted date
+      time: formattedTime,
+      date: formattedDate,
       location: json['location'],
+      imageUrl: json['imageUrl'] ??
+          defaultImageUrl, // Use defaultImageUrl if imageUrl is not provided
     );
+  }
+
+  // Convert a ScheduleItem instance into a Map
+  Map<String, dynamic> toMap() {
+    return {
+      'title': title,
+      'time': time,
+      'date': date,
+      'location': location,
+      'imageUrl': imageUrl,
+    };
   }
 }

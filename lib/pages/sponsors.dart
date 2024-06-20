@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:lifelight_app/config.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class SponsorPage extends StatefulWidget {
   const SponsorPage({Key? key}) : super(key: key);
@@ -27,9 +27,12 @@ class SponsorPageState extends State<SponsorPage> {
     });
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-   int? selectedFestivalId = prefs.getInt('selectedFestivalId');
+    int? selectedFestivalId = prefs.getInt('selectedFestivalId');
 
-    final response = await Supabase.instance.client.from("sponsors").select('*').eq("festival", selectedFestivalId!);
+    final response = await Supabase.instance.client
+        .from("sponsors")
+        .select('*')
+        .eq("festival", selectedFestivalId!);
 
     if (response.isEmpty) {
       throw Exception('No sponsors found');
@@ -67,7 +70,8 @@ class SponsorPageState extends State<SponsorPage> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     "Thank You to our incredible sponsors click on their logos below to learn more.",
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -83,11 +87,15 @@ class SponsorPageState extends State<SponsorPage> {
   Future<void> _handleTap(Sponsor sponsor) async {
     if ((sponsor.advert == null || sponsor.advert!.isEmpty) &&
         sponsor.link != null) {
-      if (await canLaunch(sponsor.link!)) {
-        await launch(sponsor.link!);
-      } else {
-        throw 'Could not launch ${sponsor.link}';
-      }
+      final ChromeSafariBrowser browser = ChromeSafariBrowser();
+      browser.open(
+        url: WebUri(sponsor.link!), // Corrected to Uri.parse for the URL
+        options: ChromeSafariBrowserClassOptions(
+          android:
+              AndroidChromeCustomTabsOptions(addDefaultShareMenuItem: false),
+          ios: IOSSafariOptions(barCollapsingEnabled: true),
+        ),
+      );
     } else if (sponsor.advert != null && sponsor.advert!.isNotEmpty) {
       Navigator.push(
         context,

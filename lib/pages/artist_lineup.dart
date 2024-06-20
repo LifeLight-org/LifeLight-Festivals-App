@@ -14,15 +14,18 @@ class Artist {
   String displayTime;
   final String image;
   final String? bio;
+  final String? link;
 
-  Artist(
-      {required this.name,
-      required this.date,
-      required this.time,
-      required this.displayTime,
-      required this.location,
-      required this.image,
-      this.bio});
+  Artist({
+    required this.name,
+    required this.date,
+    required this.time,
+    required this.displayTime,
+    required this.location,
+    required this.image,
+    this.bio,
+    this.link,
+  });
 
   factory Artist.fromJson(Map<String, dynamic> json) {
     var inputFormat = DateFormat('HH:mm:ss');
@@ -43,6 +46,7 @@ class Artist {
       location: json['stage'],
       image: json['image'],
       bio: bio,
+      link: json['link'],
     );
   }
 
@@ -55,6 +59,7 @@ class Artist {
       'location': location,
       'image': image,
       'bio': bio,
+      'link': link, 
     };
   }
 }
@@ -65,7 +70,10 @@ Future<List<Artist>> fetchArtists() async {
   var box = await Hive.openBox('artistBox');
 
   try {
-    final response = await Supabase.instance.client.from("artist_lineup").select('*').eq('festival', selectedFestivalId!);
+    final response = await Supabase.instance.client
+        .from("artist_lineup")
+        .select('*')
+        .eq('festival', selectedFestivalId!);
     List<Artist> artists = List<Artist>.from(
         (response as List).map((item) => Artist.fromJson(item)));
     // Store the artists in Hive
@@ -95,7 +103,8 @@ class ArtistLineupPage extends StatefulWidget {
   ArtistLineupPageState createState() => ArtistLineupPageState();
 }
 
-class ArtistLineupPageState extends State<ArtistLineupPage> with TickerProviderStateMixin {
+class ArtistLineupPageState extends State<ArtistLineupPage>
+    with TickerProviderStateMixin {
   late TabController _dateController = TabController(length: 0, vsync: this);
   final Map<String, TabController> _locationControllers = {};
   List<Artist> _artists = [];
@@ -108,9 +117,11 @@ class ArtistLineupPageState extends State<ArtistLineupPage> with TickerProviderS
     fetchArtists().then((artists) {
       setState(() {
         _artists = artists;
-        _dateController = TabController(length: _getUniqueDates().length, vsync: this);
+        _dateController =
+            TabController(length: _getUniqueDates().length, vsync: this);
         _getUniqueDates().forEach((date) {
-          _locationControllers[date] = TabController(length: _getUniqueLocationsForDate(date).length, vsync: this);
+          _locationControllers[date] = TabController(
+              length: _getUniqueLocationsForDate(date).length, vsync: this);
         });
         _isLoading = false; // Step 3: Set loading to false after fetching
       });
@@ -262,6 +273,7 @@ class ArtistLineupPageState extends State<ArtistLineupPage> with TickerProviderS
               playtime: artist.displayTime,
               imageUrl: artist.image,
               aboutText: artist.bio ?? 'Coming Soon!',
+              link: artist.link,
             );
           },
         );
