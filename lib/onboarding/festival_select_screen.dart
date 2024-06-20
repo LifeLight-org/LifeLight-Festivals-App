@@ -132,7 +132,7 @@ class FestivalCard extends StatelessWidget {
       child: Card(
         child: ClipRRect(
           borderRadius:
-              BorderRadius.circular(10.0), // Add border radius if desired
+              BorderRadius.circular(5.0), // Add border radius if desired
           child: Stack(
             children: [
               Positioned.fill(child: Container(color: Colors.black)),
@@ -155,7 +155,7 @@ class FestivalCard extends StatelessWidget {
               Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                      vertical: 5.0, horizontal: 5.0),
+                      vertical: 2.0, horizontal: 2.0),
                   child: InkWell(
                     onTap: () =>
                         onFestivalSelected(festivalLogo, festivalDBPrefix),
@@ -165,21 +165,12 @@ class FestivalCard extends StatelessWidget {
                           MainAxisSize.min, // Center the column vertically
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(10.0),
+                          padding: const EdgeInsets.all(2.0),
                           child: Image.network(
                             festivalLogo,
-                            width: 150, // Set a larger width for the image
-                            height: 140, // Set a larger height for the image
+                            width: 170, // Set a larger width for the image
+                            height: 160, // Set a larger height for the image
                           ),
-                        ),
-                        Text(
-                          festivalName,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
                         ),
                       ],
                     ),

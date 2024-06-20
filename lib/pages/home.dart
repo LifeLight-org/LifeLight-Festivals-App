@@ -221,7 +221,7 @@ class HomePageState extends State<HomePage> {
               ),
               // The last button
               Align(
-                alignment: Alignment.bottomCenter,
+                alignment: Alignment(0, 0.94),
                 child: IconButtonCard(
                   icon: buttons[buttons.length - 1]['icon'],
                   navigationType: buttons[buttons.length - 1]['type'],

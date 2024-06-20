@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'connectpage.dart';
-import 'resourcespage.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class KnowGodPage extends StatelessWidget {
   @override
@@ -42,31 +41,16 @@ class KnowGodPage extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ConnectPage()),
-                );
+                              final ChromeSafariBrowser browser = ChromeSafariBrowser();
+              browser.open(
+                  url: WebUri('https://lifelight.breezechms.com/form/23d1f1'), // Use the `url` parameter here
+                  options: ChromeSafariBrowserClassOptions(
+                      android: AndroidChromeCustomTabsOptions(
+                          addDefaultShareMenuItem: false),
+                      ios: IOSSafariOptions(barCollapsingEnabled: true)));
               },
               child: Text(
                 'Please let us know about your decision to accept Christ here.',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  color:
-                      Color(0xffFFD000), // This makes the text look like a link
-                  decoration: TextDecoration.underline,
-                ),
-              ),
-            ),
-            SizedBox(height: 35.0), // Add some spacing
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ResourcesPage()),
-                );
-              },
-              child: Text(
-                'For further resources click here.',
                 style: TextStyle(
                   fontSize: 20.0,
                   color:
