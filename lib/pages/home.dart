@@ -7,7 +7,6 @@ import 'package:lifelight_app/pages/settings.dart';
 import 'package:lifelight_app/pages/sponsors.dart';
 import 'package:lifelight_app/pages/faqpage.dart';
 import 'package:lifelight_app/pages/resourcespage.dart';
-import 'package:lifelight_app/pages/connectpage.dart';
 import 'package:lifelight_app/pages/knowgodpage.dart';
 import 'package:lifelight_app/component-widgets/iconbutton.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -64,7 +63,7 @@ class HomePageState extends State<HomePage> {
       },
       {'icon': Icons.info, 'type': NavigationType.page, 'text': 'RESOURCES', 'page': ResourcesPage()},
       // Conditionally add the IMPACT button
-      {'text': 'CONNECT CARD', 'type': NavigationType.webBrowser, 'url': 'https://lifelight.breezechms.com/form/23d1f1', 'width': MediaQuery.of(context).size.width * 0.9},
+      {'text': 'CONNECT CARD', 'type': NavigationType.webBrowser, 'url': 'https://lifelight.breezechms.com/form/23d1f1', 'width': 355.00},
     ];
 
     // Check the condition and add the IMPACT button if necessary
