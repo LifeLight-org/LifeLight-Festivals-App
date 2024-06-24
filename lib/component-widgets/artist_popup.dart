@@ -62,7 +62,7 @@ class ArtistPopup extends StatelessWidget {
                                     AutoSizeText(
                                       stage,
                                       style: const TextStyle(
-                                        fontSize: 20.0,
+                                        fontSize: 16.0,
                                         color: Colors.grey,
                                       ),
                                       minFontSize: 16,
@@ -82,7 +82,7 @@ class ArtistPopup extends StatelessWidget {
                                     AutoSizeText(
                                       playtime,
                                       style: const TextStyle(
-                                        fontSize: 20.0,
+                                        fontSize: 16.0,
                                         color: Colors.grey,
                                       ),
                                       minFontSize: 16,
@@ -115,7 +115,7 @@ class ArtistPopup extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 16.0),
                       child: AutoSizeText(
                         'About $artistName',
-                        style: TextStyle(fontSize: 20),
+                        style: TextStyle(fontSize: 17),
                         minFontSize: 14,
                         stepGranularity: 1,
                         maxLines: 2,
@@ -130,7 +130,7 @@ class ArtistPopup extends StatelessWidget {
                       child: SingleChildScrollView(
                         child: AutoSizeText(
                           aboutText,
-                          style: TextStyle(fontSize: 25),
+                          style: TextStyle(fontSize: 20),
                           minFontSize: 20,
                           stepGranularity: 10,
                           maxLines: 100,

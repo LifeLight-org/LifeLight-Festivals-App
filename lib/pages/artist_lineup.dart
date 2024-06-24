@@ -164,7 +164,7 @@ class ArtistLineupPageState extends State<ArtistLineupPage>
     var uniqueDates = _getUniqueDates();
     return Scaffold(
       appBar: AppBar(
-        title: Text('ARTIST LINEUP'),
+        title: Text('ARTIST LINEUP AND BIOS'),
         bottom: _buildTabBar(uniqueDates, _dateController, formatDate),
       ),
       body: _isLoading // Step 4: Conditional rendering based on loading state

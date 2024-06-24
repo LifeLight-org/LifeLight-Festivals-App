@@ -21,7 +21,7 @@ class EventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap, // Use the callback here
+      //onTap: onTap, // Use the callback here
       child: Card(
         margin: const EdgeInsets.all(8.0),
         elevation: 2.0,

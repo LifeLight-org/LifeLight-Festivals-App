@@ -63,20 +63,7 @@ class ArtistCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 5),
-                    Row(
-                      children: [
-                        Icon(Icons.access_time, color: Colors.white),
-                        SizedBox(width: 5),
-                        Text(
-                          artist.displayTime == '12:00 AM' ? 'TBA' : artist.displayTime,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),
