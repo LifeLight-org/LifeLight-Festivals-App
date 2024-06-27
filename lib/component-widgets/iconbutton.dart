@@ -15,6 +15,7 @@ class IconButtonCard extends StatelessWidget {
   final String? url;
   final String? dialogTitle;
   final String? dialogMessage;
+  final String? nextButtonText;
 
   IconButtonCard({
     Key? key,
@@ -27,6 +28,7 @@ class IconButtonCard extends StatelessWidget {
     this.url = "https://lifelight.org/", // Default URL value
     this.dialogTitle,
     this.dialogMessage,
+    this.nextButtonText,
   })  : assert(icon is IconData ||
             icon is FaIcon ||
             icon == null), // add null check
@@ -75,7 +77,7 @@ class IconButtonCard extends StatelessWidget {
                     content: Text(dialogMessage!),
                     actions: <Widget>[
                       TextButton(
-                        child: Text('Next'),
+                        child: Text(nextButtonText ?? 'Next'),
                         onPressed: () {
                           final ChromeSafariBrowser browser =
                               ChromeSafariBrowser();

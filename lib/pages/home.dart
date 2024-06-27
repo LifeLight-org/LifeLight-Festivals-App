@@ -70,7 +70,7 @@ class HomePageState extends State<HomePage> {
     if (selectedFestivalDBPrefix != 'LL') {
       buttons.insert(
         buttons.length - 1, // Insert before the last item
-        {'icon': Icons.currency_exchange, 'type': NavigationType.popupToWebBrowser, 'dialogTitle': 'Impact', 'dialogMessage': "By Supporting LifeLight Hills Alive, You Can Make A Real Difference In People's Lives. A Monthly Gift Of \$22 Or More Spreads The Joy, Inspiration, And Community Spirit Of Hills Alive To Those Who Need It Most. Together, We Can Bring Light Into Darkness, Touch More Lives, And Create Lasting Change. Join Us In Keeping This Life-Changing Event Alive In Your Community Today!", 'url': 'https://lifelight.breezechms.com/give/online/?fund_id=1882935&frequency=M', 'text': 'IMPACT'},
+        {'icon': Icons.currency_exchange, 'type': NavigationType.popupToWebBrowser, 'nextButtonText': "Donate", 'dialogTitle': 'Impact', 'dialogMessage': "By Supporting LifeLight Hills Alive, You Can Make A Real Difference In People's Lives. A Monthly Gift Of \$22 Or More Spreads The Joy, Inspiration, And Community Spirit Of Hills Alive To Those Who Need It Most. Together, We Can Bring Light Into Darkness, Touch More Lives, And Create Lasting Change. Join Us In Keeping This Life-Changing Event Alive In Your Community Today!", 'url': 'https://lifelight.breezechms.com/give/online/?fund_id=1882935&frequency=M', 'text': 'IMPACT'},
       );
     }
   }
@@ -214,6 +214,7 @@ class HomePageState extends State<HomePage> {
                     navigationType: buttons[index]['type'],
                     dialogTitle: buttons[index]['dialogTitle'],
                     dialogMessage: buttons[index]['dialogMessage'],
+                    nextButtonText: buttons[index]['nextButtonText'],
                     url: buttons[index]['url'],
                     text: buttons[index]['text'],
                     page: buttons[index]['page'],
