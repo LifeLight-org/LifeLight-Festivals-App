@@ -10,8 +10,7 @@ class MapPage extends StatefulWidget {
 
 class MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
   final TransformationController _controller = TransformationController();
-  String _selectedfestmap =
-      'https://bjywcdylkgnaxsbgtrpr.supabase.co/storage/v1/object/public/maps/HA-Map.png';
+  String _selectedfestmap = 'HA';
   late SharedPreferences _prefs;
 
   @override

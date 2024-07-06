@@ -39,6 +39,7 @@ dependencies:
   upgrader: ^10.3.0
   package_info_plus: ^8.0.0
   flutter_native_splash: ^2.4.0
+  flutter_widget_from_html: ^0.15.1
 
 dev_dependencies:
   flutter_test:

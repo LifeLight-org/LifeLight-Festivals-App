@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 class ResourcesPage extends StatelessWidget {
   // Add a key parameter to the constructor
@@ -112,6 +113,12 @@ class ResourcesPage extends StatelessWidget {
                   },
                   child: const Text('Open hopewithgod.com'),
                 ),
+              ),
+              _buildSectionTitle('Music From The Festival'),
+              Padding(
+                padding: const EdgeInsets.only(top: 15.0),
+                  child: HtmlWidget(
+                      '<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/1bQiTwEQ8SblhtxV0ZTiLd?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>'),
               ),
             ],
           ),
