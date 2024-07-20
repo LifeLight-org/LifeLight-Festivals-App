@@ -9,6 +9,7 @@ class ArtistPopup extends StatelessWidget {
   final String imageUrl;
   final String aboutText;
   final String? link;
+  final bool isCancelled;
 
   const ArtistPopup({
     Key? key,
@@ -18,6 +19,7 @@ class ArtistPopup extends StatelessWidget {
     required this.imageUrl,
     required this.aboutText,
     this.link,
+    required this.isCancelled,
   }) : super(key: key);
 
   @override
@@ -44,6 +46,26 @@ class ArtistPopup extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                isCancelled
+                                    ? Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical:
+                                                4), // Adjust padding as needed
+                                        color: Colors
+                                            .red, // Choose a background color for the banner
+                                        child: Text(
+                                          'Cancelled',
+                                          style: TextStyle(
+                                            color: Colors
+                                                .white, // Choose text color
+                                            fontWeight: FontWeight
+                                                .bold, // Adjust text style as needed
+                                          ),
+                                        ),
+                                      )
+                                    : SizedBox
+                                        .shrink(), // Or Container() if you prefer
                                 AutoSizeText(
                                   artistName,
                                   style: TextStyle(fontSize: 20),
@@ -51,46 +73,6 @@ class ArtistPopup extends StatelessWidget {
                                   stepGranularity: 1,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.location_on,
-                                      size: 16.0,
-                                      color: Colors.grey,
-                                    ),
-                                    AutoSizeText(
-                                      stage,
-                                      style: const TextStyle(
-                                        fontSize: 16.0,
-                                        color: Colors.grey,
-                                      ),
-                                      minFontSize: 16,
-                                      stepGranularity: 1,
-                                      maxLines: 4,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.access_time,
-                                      size: 16.0,
-                                      color: Colors.grey,
-                                    ),
-                                    AutoSizeText(
-                                      playtime,
-                                      style: const TextStyle(
-                                        fontSize: 16.0,
-                                        color: Colors.grey,
-                                      ),
-                                      minFontSize: 16,
-                                      stepGranularity: 1,
-                                      maxLines: 4,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
                                 ),
                                 Row(
                                   children: [linkIcon()],

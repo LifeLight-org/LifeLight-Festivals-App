@@ -15,6 +15,7 @@ class Artist {
   final String image;
   final String? bio;
   final String? link;
+  final bool isCancelled;
 
   Artist({
     required this.name,
@@ -25,6 +26,7 @@ class Artist {
     required this.image,
     this.bio,
     this.link,
+    required this.isCancelled,
   });
 
   factory Artist.fromJson(Map<String, dynamic> json) {
@@ -38,6 +40,7 @@ class Artist {
     }
 
     String bio = json['about'] ?? 'Bio Coming Soon!';
+    
     return Artist(
       name: json['name'],
       date: json['date'],
@@ -47,6 +50,7 @@ class Artist {
       image: json['image'],
       bio: bio,
       link: json['link'],
+      isCancelled: json['isCancelled'],
     );
   }
 
@@ -60,6 +64,7 @@ class Artist {
       'image': image,
       'bio': bio,
       'link': link, 
+      'isCancelled': isCancelled,
     };
   }
 }
@@ -67,17 +72,13 @@ class Artist {
 Future<List<Artist>> fetchArtists() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   int? selectedFestivalId = prefs.getInt('selectedFestivalId');
-  var box = await Hive.openBox('artistBox');
-
   try {
     final response = await Supabase.instance.client
         .from("artist_lineup")
-        .select('*')
+        .select('name, date, time, stage, image, link, about, isCancelled')
         .eq('festival', selectedFestivalId!);
     List<Artist> artists = List<Artist>.from(
         (response as List).map((item) => Artist.fromJson(item)));
-    // Store the artists in Hive
-    box.put('artists', artists.map((artist) => artist.toJson()).toList());
     artists.sort((a, b) {
       var adate = DateFormat('yyyy-MM-dd').parse(a.date);
       var bdate = DateFormat('yyyy-MM-dd').parse(b.date);
@@ -87,12 +88,11 @@ Future<List<Artist>> fetchArtists() async {
           ? atime.compareTo(btime)
           : adate.compareTo(bdate);
     });
-
+    print(response);
     return artists;
   } catch (e) {
-    // Fetch from Hive
-    var artistsJson = box.get('artists', defaultValue: []);
-    return List<Artist>.from(artistsJson.map((item) => Artist.fromJson(item)));
+    print(e);
+    return [];
   }
 }
 
@@ -263,6 +263,7 @@ class ArtistLineupPageState extends State<ArtistLineupPage>
   Widget _buildArtistCard(Artist artist) {
     return ArtistCard(
       artist: artist,
+      isCancelled: artist.isCancelled,
       onTap: () {
         showDialog(
           context: context,
@@ -274,6 +275,7 @@ class ArtistLineupPageState extends State<ArtistLineupPage>
               imageUrl: artist.image,
               aboutText: artist.bio ?? 'Coming Soon!',
               link: artist.link,
+              isCancelled: artist.isCancelled,
             );
           },
         );
