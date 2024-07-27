@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lifelight_app/component-widgets/artist_card.dart';
 import 'package:intl/intl.dart';
 import 'package:lifelight_app/component-widgets/artist_popup.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
 class Artist {
   final String name;
