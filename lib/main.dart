@@ -90,7 +90,7 @@ class MyApp extends StatelessWidget {
     Widget initialScreen;
 
     if (hasOnboarded) {
-      initialScreen = const HomePage();
+      initialScreen = HomePage();
     } else {
       initialScreen = const FestivalSelectScreen();
     }

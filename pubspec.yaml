@@ -1,7 +1,7 @@
 name: lifelight_app
 description: "LifeLight Festivals App"
 publish_to: 'none'
-version: 1.3.4+17
+version: 1.3.5+18
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -53,6 +53,7 @@ flutter:
     - assets/icons/
     - assets/theme.json
     - .env
+    - shorebird.yaml
   fonts:
     - family: Raleway
       fonts:
