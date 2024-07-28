@@ -12,6 +12,7 @@ import 'package:lifelight_app/component-widgets/iconbutton.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lifelight_app/supabase_client.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -24,7 +25,7 @@ class HomePageState extends State<HomePage> {
   String? uuid;
   String? festivalShortName;
   List<Map<String, dynamic>> buttons = [];
-  Map<String, dynamic> festivalData = {};  // Change to Map<String, dynamic>
+  Map<String, dynamic> festivalData = {}; // Change to Map<String, dynamic>
 
   Future<void> loadButtons() async {
     final sharedPreferences = await SharedPreferences.getInstance();
@@ -124,13 +125,18 @@ class HomePageState extends State<HomePage> {
   }
 
   Future<Map<String, dynamic>> fetchFestivals() async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-  int? selectedFestivalId = prefs.getInt('selectedFestivalId');
-    final response = await supabase.from('festivals').select().eq('id', selectedFestivalId!).single();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? selectedFestivalId = prefs.getInt('selectedFestivalId');
+    final response = await supabase
+        .from('festivals')
+        .select()
+        .eq('id', selectedFestivalId!)
+        .single();
     if (response != null) {
       print(response);
       setState(() {
-        festivalData = response as Map<String, dynamic>; // Store the fetched data
+        festivalData =
+            response as Map<String, dynamic>; // Store the fetched data
       });
       print(festivalData);
       return response as Map<String, dynamic>;
@@ -163,20 +169,20 @@ class HomePageState extends State<HomePage> {
     ]);
   }
 
-Container buildBackground() {
-  return Container(
-    decoration: BoxDecoration(
-      image: DecorationImage(
-        image: NetworkImage(
-          festivalData['backgroundImage']?.isNotEmpty == true
-              ? festivalData['backgroundImage']
-              : 'https://bjywcdylkgnaxsbgtrpr.supabase.co/storage/v1/object/public/images/backgrounds/LifeLight_Hills_Alive-background-1722003740977', // Provide a default image URL
+  Container buildBackground() {
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: CachedNetworkImageProvider(
+            festivalData['backgroundImage']?.isNotEmpty == true
+                ? festivalData['backgroundImage']
+                : 'https://bjywcdylkgnaxsbgtrpr.supabase.co/storage/v1/object/public/images/backgrounds/LifeLight_Hills_Alive-background-1722003740977', // Provide a default image URL
+          ),
+          fit: BoxFit.cover,
         ),
-        fit: BoxFit.cover,
       ),
-    ),
-  );
-}
+    );
+  }
 
   Scaffold buildScaffold(BuildContext context) {
     return Scaffold(
@@ -274,21 +280,13 @@ Container buildBackground() {
   Widget buildHero() {
     return Hero(
       tag: 'eventLogo',
-      child: Image.network(festivalData['light_logo_url']?.isNotEmpty == true
-          ? festivalData['light_logo_url']
-          : 'https://lifelight.org/wp-content/uploads/2023/10/cropped-LL-Logo.jpeg',
-        height: MediaQuery.of(context).size.height *
-            0.16, // use the data from the Future
+      child: CachedNetworkImage(
+        imageUrl: festivalData['light_logo_url']?.isNotEmpty == true
+            ? festivalData['light_logo_url']
+            : 'https://lifelight.org/wp-content/uploads/2023/10/cropped-LL-Logo.jpeg',
+        height: MediaQuery.of(context).size.height * 0.16,
         width: double.infinity,
         fit: BoxFit.contain,
-        errorBuilder: (context, error, stackTrace) {
-          return Image.asset(
-            'assets/images/LL-Logo.png',
-            height: 150,
-            width: double.infinity,
-            fit: BoxFit.contain,
-          );
-        },
       ),
     );
   }
