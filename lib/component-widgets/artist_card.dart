@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lifelight_app/pages/artist_lineup.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ArtistCard extends StatelessWidget {
   final Artist artist;
@@ -14,7 +15,6 @@ class ArtistCard extends StatelessWidget {
   }) : super(key: key);
 
   @override
-
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
@@ -32,15 +32,17 @@ class ArtistCard extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(5.0),
-                    child: FadeInImage(
-                      placeholder: const AssetImage('assets/images/background.jpg'),
-                      image: NetworkImage(artist.image),
+                    child: CachedNetworkImage(
+                      imageUrl: artist.image,
+                      placeholder: (context, url) => Image.asset(
+                          'assets/images/background.jpg',
+                          fit: BoxFit.cover),
+                      errorWidget: (context, url, error) => Image.asset(
+                          'assets/images/background.jpg',
+                          fit: BoxFit.cover),
                       width: double.infinity,
                       height: double.infinity,
                       fit: BoxFit.cover,
-                      imageErrorBuilder: (context, error, stackTrace) {
-                        return Image.asset('assets/images/background.jpg', fit: BoxFit.cover);
-                      },
                     ),
                   ),
                   Container(
@@ -81,7 +83,8 @@ class ArtistCard extends StatelessWidget {
                 top: 0,
                 right: 0,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.red,
                     borderRadius: BorderRadius.only(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class EventCard extends StatelessWidget {
   final String title;
@@ -32,13 +33,14 @@ class EventCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(10.0),
           child: Stack(
             children: [
-              Image.network(
-                imageUrl!.isEmpty
+              CachedNetworkImage(
+                imageUrl: imageUrl!.isEmpty
                     ? 'https://bjywcdylkgnaxsbgtrpr.supabase.co/storage/v1/object/public/temp_images/HA-arial.jpg'
                     : imageUrl!,
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: 200.0,
+                errorWidget: (context, url, error) => Icon(Icons.error),
               ),
               Container(
                 width: double.infinity, // Full width

@@ -31,14 +31,19 @@ class HomePageState extends State<HomePage> {
     final sharedPreferences = await SharedPreferences.getInstance();
     final selectedFestivalDBPrefix =
         sharedPreferences.getString('selectedFestivalDBPrefix');
+    final selectedFestivalId = sharedPreferences.getInt('selectedFestivalId');
+
+    final donateUrl = await supabase
+        .from('festivals')
+        .select('donateUrl')
+        .eq('id', selectedFestivalId!)
+        .single();
+
     String getDonateUrl() {
-      switch (selectedFestivalDBPrefix) {
-        case 'HA':
-          return 'https://lifelight.breezechms.com/give/online/?fund_id=1822623';
-        case 'LL':
-          return 'https://lifelight.breezechms.com/give/online/?fund_id=1827270';
-        default:
-          return 'https://lifelight.breezechms.com/give/online';
+      if (donateUrl != null) {
+        return donateUrl['donateUrl'] as String;
+      } else {
+        return 'https://lifelight.breezechms.com/give/online';
       }
     }
 
@@ -101,19 +106,24 @@ class HomePageState extends State<HomePage> {
       },
     ];
 
-    // Check the condition and add the IMPACT button if necessary
-    if (selectedFestivalDBPrefix != 'LL') {
+    final impactUrl = await supabase
+        .from('festivals')
+        .select('impactUrl, impactMessage, impactNextButtonText')
+        .eq('id', selectedFestivalId!)
+        .single();
+
+    print('$selectedFestivalId, Impact URL: $impactUrl');
+
+    if (impactUrl != null && impactUrl['impactUrl'] != null) {
       loadedButtons.insert(
         loadedButtons.length - 1, // Insert before the last item
         {
           'icon': Icons.currency_exchange,
           'type': NavigationType.popupToWebBrowser,
-          'nextButtonText': "Donate",
+          'nextButtonText': impactUrl['impactNextButtonText'],
           'dialogTitle': 'Impact',
-          'dialogMessage':
-              "By Supporting LifeLight Hills Alive, You Can Make A Real Difference In People's Lives. A Monthly Gift Of \$22 Or More Spreads The Joy, Inspiration, And Community Spirit Of Hills Alive To Those Who Need It Most. Together, We Can Bring Light Into Darkness, Touch More Lives, And Create Lasting Change. Join Us In Keeping This Life-Changing Event Alive In Your Community Today!",
-          'url':
-              'https://lifelight.breezechms.com/give/online/?fund_id=1882935&frequency=M',
+          'dialogMessage': impactUrl['impactMessage'],
+          'url': impactUrl['impactUrl'],
           'text': 'IMPACT'
         },
       );
@@ -281,12 +291,17 @@ class HomePageState extends State<HomePage> {
     return Hero(
       tag: 'eventLogo',
       child: CachedNetworkImage(
-        imageUrl: festivalData['light_logo_url']?.isNotEmpty == true
-            ? festivalData['light_logo_url']
-            : 'https://lifelight.org/wp-content/uploads/2023/10/cropped-LL-Logo.jpeg',
+        imageUrl: festivalData['light_logo_url'] ?? '',
         height: MediaQuery.of(context).size.height * 0.16,
         width: double.infinity,
         fit: BoxFit.contain,
+        placeholder: (context, url) => Center(
+          child: CircularProgressIndicator(),
+        ),
+        errorWidget: (context, url, error) =>
+            Image.asset('assets/images/LL-Logo.png'),
+        fadeInDuration: Duration(milliseconds: 500), // Add fade transition
+        fadeOutDuration: Duration(milliseconds: 500),
       ),
     );
   }

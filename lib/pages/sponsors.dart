@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:lifelight_app/config.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class SponsorPage extends StatefulWidget {
   const SponsorPage({Key? key}) : super(key: key);
@@ -153,10 +154,12 @@ class SponsorGrid extends StatelessWidget {
           onTap: () => onTap(sponsor),
           child: Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Image.network(
-              sponsor.logo,
-              fit: BoxFit.contain,
-            ),
+child: Image(
+  image: CachedNetworkImageProvider(
+    sponsor.logo,
+  ),
+  fit: BoxFit.contain,
+),
           ),
         );
       },
