@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -55,22 +56,27 @@ class MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                 transformationController: _controller,
                 child: AspectRatio(
                   aspectRatio: aspectRatio, // Use the calculated aspect ratio
-                  child: Image.network(
-                    'https://bjywcdylkgnaxsbgtrpr.supabase.co/storage/v1/object/public/maps/${_selectedfestmap}-Map.png',
+                  child: CachedNetworkImage(
+                    imageUrl:
+                        'https://bjywcdylkgnaxsbgtrpr.supabase.co/storage/v1/object/public/maps/${_selectedfestmap}-Map.png',
                     fit: BoxFit.scaleDown,
-                    loadingBuilder: (BuildContext context, Widget child,
-                        ImageChunkEvent? loadingProgress) {
-                      if (loadingProgress == null)
-                        return child; // Image has finished loading
-                      return Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
-                              : null, // Display the loading progress
+                    placeholder: (context, url) => Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    errorWidget: (context, url, error) => Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.error, size: 50, color: Colors.red),
+                        SizedBox(height: 8),
+                        Text(
+                          "Can't Display Map",
+                          style: TextStyle(fontSize: 16, color: Colors.red),
                         ),
-                      );
-                    },
+                      ],
+                    ),
+                    fadeInDuration:
+                        Duration(milliseconds: 500), // Add fade transition
+                    fadeOutDuration: Duration(milliseconds: 500),
                   ),
                 ),
               );
