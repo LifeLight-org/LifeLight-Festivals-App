@@ -64,136 +64,93 @@ class _ResourcesPageState extends State<ResourcesPage> {
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator()) // Show loading indicator
-          : ministryPartners.isEmpty
-              ? Container(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildSectionTitle('Pocket Testament League'),
-                      _buildSectionContent(
-                        "The Pocket Testament League app is your digital tool for sharing the message of the Bible. Access digital New Testaments, get tips for effective evangelism.",
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 15.0),
-                        child: ElevatedButton(
-                          onPressed: () => _launchAppURL(context),
-                          child: const Text('Open The PTL App'),
+          : ListView.builder(
+              itemCount: ministryPartners.length + 2, // Add two for the extra containers
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  // This is the extra container at the start
+                  return Container(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSectionTitle('Our Ministry Partners'),
+                      ],
+                    ),
+                  );
+                } else if (index == ministryPartners.length + 1) {
+                  // This is the extra container at the end
+                  return Container(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSectionTitle('Pocket Testament League'),
+                        _buildSectionContent(
+                          "The Pocket Testament League app is your digital tool for sharing the message of the Bible. Access digital New Testaments, get tips for effective evangelism.",
                         ),
-                      ),
-                      _buildSectionTitle('Hope With God'),
-                      _buildSectionContent(
-                        "Hope With God is an online platform that provides resources and support for individuals seeking spiritual guidance and encouragement. It helps people face life's challenges with faith and hope, providing inspiration, answers, and a supportive community for spiritual growth.",
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 15.0),
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            const url = 'https://www.hopewithgod.com';
-                            if (await canLaunch(url)) {
-                              await launch(url);
-                            } else {
-                              throw 'Could not launch $url';
-                            }
-                          },
-                          child: const Text('Open hopewithgod.com'),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: ministryPartners.length +
-                      1, // Add two for the extra containers at the end
-                  itemBuilder: (context, index) {
-                    if (index == 0) {
-                      // This is the extra container at the start
-                      return Container(
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildSectionTitle('Our Ministry Partners'),
-                          ],
-                        ),
-                      );
-                    } else if (index == ministryPartners.length) {
-                      // This is the first extra container
-                      return Container(
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildSectionTitle('Pocket Testament League'),
-                            _buildSectionContent(
-                              "The Pocket Testament League app is your digital tool for sharing the message of the Bible. Access digital New Testaments, get tips for effective evangelism.",
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 15.0),
-                              child: ElevatedButton(
-                                onPressed: () => _launchAppURL(context),
-                                child: const Text('Open The PTL App'),
-                              ),
-                            ),
-                            _buildSectionTitle('Hope With God'),
-                            _buildSectionContent(
-                              "Hope With God is an online platform that provides resources and support for individuals seeking spiritual guidance and encouragement. It helps people face life's challenges with faith and hope, providing inspiration, answers, and a supportive community for spiritual growth.",
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 15.0),
-                              child: ElevatedButton(
-                                onPressed: () async {
-                                  const url = 'https://www.hopewithgod.com';
-                                  if (await canLaunch(url)) {
-                                    await launch(url);
-                                  } else {
-                                    throw 'Could not launch $url';
-                                  }
-                                },
-                                child: const Text('Open hopewithgod.com'),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      // Return a ListTile for ministryPartners items
-                      final partner = ministryPartners[index];
-                      return Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: Color(
-                                  0xFFFFDD00), // Color of the border using hex value
-                              width: 1.0, // Width of the border
-                            ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 15.0),
+                          child: ElevatedButton(
+                            onPressed: () => _launchAppURL(context),
+                            child: const Text('Open The PTL App'),
                           ),
                         ),
-                        child: ListTile(
-                          title: Text(partner.name),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(partner.address),
-                              Text(partner.phone ??
-                                  ''), // Use null-aware operator for optional fields
-                              Text(partner.website ??
-                                  ''), // Use null-aware operator for optional fields
-                            ],
-                          ),
-                          isThreeLine: true,
-                          onTap: () async {
-                            final Uri _url =
-                                Uri.parse('http://${partner.website}/');
-                            if (!await launchUrl(_url)) {
-                              throw Exception('Could not launch $_url');
-                            }
-                          },
+                        _buildSectionTitle('Hope With God'),
+                        _buildSectionContent(
+                          "Hope With God is an online platform that provides resources and support for individuals seeking spiritual guidance and encouragement. It helps people face life's challenges with faith and hope, providing inspiration, answers, and a supportive community for spiritual growth.",
                         ),
-                      );
-                    }
-                  },
-                ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 15.0),
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              const url = 'https://www.hopewithgod.com';
+                              if (await canLaunch(url)) {
+                                await launch(url);
+                              } else {
+                                throw 'Could not launch $url';
+                              }
+                            },
+                            child: const Text('Open hopewithgod.com'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  // Return a ListTile for ministryPartners items
+                  final partner = ministryPartners[index - 1]; // Adjust index to account for the extra container
+                  return Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Color(0xFFFFDD00), // Color of the border using hex value
+                          width: 1.0, // Width of the border
+                        ),
+                      ),
+                    ),
+                    child: ListTile(
+                      title: Text(partner.name),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(partner.address),
+                          Text(partner.phone ?? ''), // Use null-aware operator for optional fields
+                          Text(partner.website ?? ''), // Use null-aware operator for optional fields
+                        ],
+                      ),
+                      isThreeLine: true,
+                      onTap: () async {
+                        final Uri _url = Uri.parse('http://${partner.website}/');
+                        if (!await launchUrl(_url)) {
+                          throw Exception('Could not launch $_url');
+                        }
+                      },
+                    ),
+                  );
+                }
+              },
+            ),
     );
   }
 }
