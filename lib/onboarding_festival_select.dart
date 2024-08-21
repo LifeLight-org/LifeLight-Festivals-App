@@ -108,7 +108,7 @@ class FestivalCard extends StatelessWidget {
           await prefs.setString('subHeading', sub_heading ?? '');
           OneSignal.User.addTagWithKey("MainSelectedFestival", id);
           print('Selected Festival ID: $id');
-          Navigator.pushReplacementNamed(context, '/');
+          Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false);
         },
         child: Padding(
           padding:

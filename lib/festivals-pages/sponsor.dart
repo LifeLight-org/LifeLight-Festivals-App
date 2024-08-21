@@ -55,7 +55,7 @@ class _SponsorPageState extends State<SponsorPage> {
               child: Column(
                 children: [
                   Text(
-                    'Thank You to Our incredible sponsors!',
+                    'Thank you to our incredible sponsors!',
                     style: TextStyle(fontSize: 24,
                     fontWeight: FontWeight.w900),
                     textAlign: TextAlign.center,

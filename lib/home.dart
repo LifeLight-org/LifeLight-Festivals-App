@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:intl/intl.dart';
+import 'package:lifelight_festivals/components/countdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -23,6 +26,7 @@ class _HomePageState extends State<HomePage> {
   Map<String, dynamic> _DonateUrl = {};
   Map<String, dynamic> _ImpactData = {};
   Map<String, dynamic> _ConnectCardData = {};
+  Map<String, dynamic> _CountdownData = {};
   String _selectedFestivalSubHeading = ''; // Define the variable here
 
   @override
@@ -33,6 +37,10 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _fetchImages() async {
     if (_selectedFestivalId == null) return;
+
+    setState(() {
+      _isLoading = true;
+    });
 
     final response = await Supabase.instance.client
         .from('festivals')
@@ -146,22 +154,58 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> _fetchCountdown() async {
+    if (_selectedFestivalId == null) return;
+
+    try {
+      final response = await Supabase.instance.client
+          .from('festivals')
+          .select('countdown_message, after_countdown_message, show_countdown_after_message_date, countdown_date')
+          .eq('id', _selectedFestivalId!)
+          .single();
+      print(response);
+      if (response != null) {
+        setState(() {
+          _CountdownData = response as Map<String, dynamic>;
+          _isLoading = false;
+        });
+      } else {
+        // Handle error
+        setState(() {
+          _isLoading = false;
+        });
+        print('Error: No data found for the selected festival.');
+      }
+    } catch (error) {
+      // Handle error
+      setState(() {
+        _isLoading = false;
+      });
+      print('Error fetching Countdown Date: $error');
+    }
+  }
+
   Future<void> _checkHomeEventSelected() async {
     final prefs = await SharedPreferences.getInstance();
     final homeEventSelected = prefs.getBool('homeEventSelected') ?? false;
     _selectedFestivalId = prefs.getInt('selectedFestivalId')?.toString();
-    _selectedFestivalSubHeading = prefs.getString('subHeading')!;
+    _selectedFestivalSubHeading = prefs.getString('subHeading') ?? '';
 
     if (!homeEventSelected) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.pushReplacementNamed(context, '/onboarding');
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/onboarding',
+          (Route<dynamic> route) => false,
+        );
       });
     } else {
-      _fetchImages();
+      await _fetchImages();
       _loadButtonConfig();
       _fetchDonateUrl();
       _fetchImpactData();
       _fetchConnectCardUrl();
+      _fetchCountdown();
     }
   }
 
@@ -230,13 +274,14 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(_images.isNotEmpty &&
-                              _images['background_image'] != null
-                          ? _images['background_image']
-                          : 'https://xsssdjpayiloazwsamfu.supabase.co/storage/v1/object/public/festival_media/festival_backgrounds/background.jpg'),
-                      fit: BoxFit.cover,
-                    ),
+                    image: _images['background_image'] != null
+                        ? DecorationImage(
+                            image: CachedNetworkImageProvider(
+                              _images['background_image'],
+                            ),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
                   ),
                 ),
                 Column(
@@ -248,8 +293,7 @@ class _HomePageState extends State<HomePage> {
                         IconButton(
                           icon: Icon(Icons.settings),
                           onPressed: () {
-                            Navigator.pushReplacementNamed(
-                                context, "/event-change");
+                            Navigator.pushNamed(context, "/settings");
                           },
                         ),
                       ],
@@ -260,13 +304,14 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(16.0),
-                            child: Image.network(
-                              _images.isNotEmpty &&
-                                      _images['light_logo'] != null
-                                  ? _images['light_logo']
-                                  : '', // Default image URL
+                            child: CachedNetworkImage(
+                              imageUrl: _images['light_logo'],
                               height: 130,
                               fit: BoxFit.cover,
+                              placeholder: (context, url) =>
+                                  Expanded(child: Text("")),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
                             ),
                           ),
                           AutoSizeText(
@@ -293,7 +338,14 @@ class _HomePageState extends State<HomePage> {
                             overflow: TextOverflow
                                 .ellipsis, // Adds an ellipsis if the text still overflows
                           ),
-                          Expanded(
+                        if (_CountdownData['countdown_date'] != null)
+                        Countdown(
+                          targetDate: DateTime.parse(_CountdownData['countdown_date']),
+                          showCountdownAfterMessageDate: DateTime.parse(_CountdownData['show_countdown_after_message_date']),
+                          afterCountdownMessage: _CountdownData['after_countdown_message'],
+                        ),
+                          SizedBox(height: 20),
+                          Container(
                             child: Center(
                               child: Padding(
                                 padding: const EdgeInsets.all(3.0),
@@ -359,7 +411,6 @@ class _HomePageState extends State<HomePage> {
                                             'email') {
                                           final email =
                                               _buttonConfig[index]['email'];
-
                                         } else {
                                           Navigator.pushNamed(context,
                                               _buttonConfig[index]['route']!);
@@ -392,7 +443,7 @@ class _HomePageState extends State<HomePage> {
                                               _buttonConfig[index]['label']!,
                                               style: TextStyle(
                                                   fontSize: 16.0,
-                                                  fontWeight: FontWeight.bold,
+                                                  fontWeight: FontWeight.w900,
                                                   color: Colors
                                                       .black), // Text color
                                             ),
@@ -413,7 +464,7 @@ class _HomePageState extends State<HomePage> {
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.only(right: 16.0, left: 16.00),
                     child: GestureDetector(
                       onTap: () async {
                         final url = _ConnectCardData[

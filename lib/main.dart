@@ -5,6 +5,7 @@ import 'package:lifelight_festivals/festivals-pages/map.dart';
 import 'package:lifelight_festivals/festivals-pages/sponsor.dart';
 import 'package:lifelight_festivals/know_god.dart';
 import 'package:lifelight_festivals/resources.dart';
+import 'package:lifelight_festivals/settings.dart';
 import 'package:lifelight_festivals/z8_events.dart';
 import 'package:lifelight_festivals/z8_about.dart';
 import 'package:lifelight_festivals/festivals-pages/schedule.dart';
@@ -62,6 +63,7 @@ class MyApp extends StatelessWidget {
           '/artists': (context) => ArtistLineupPage(),
           '/schedule': (context) => SchedulePage(),
           '/onboarding': (context) => const OnboardingFestivalSelectPage(),
+          '/settings': (context) => SettingsPage(),
         },
         theme: theme.dark(),
       ),
