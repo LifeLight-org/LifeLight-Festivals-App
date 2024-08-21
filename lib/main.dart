@@ -15,6 +15,7 @@ import 'util.dart';
 import 'theme.dart';
 
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:upgrader/upgrader.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,23 +45,26 @@ class MyApp extends StatelessWidget {
     TextTheme textTheme = createTextTheme(context, "Raleway", "Raleway");
 
     MaterialTheme theme = MaterialTheme(textTheme);
-    return MaterialApp(
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const HomePage(),
-        '/event-change': (context) => const OnboardingFestivalSelectPage(),
-        '/z8-events': (context) => EventsPage(),
-        '/z8-about': (context) => AboutPage(),
-        '/know-god': (context) => KnowGodPage(),
-        '/resources': (context) => ResourcesPage(),
-        '/faq': (context) => FAQPage(),
-        '/map': (context) => const MapPage(),
-        '/sponsors': (context) => SponsorPage(),
-        '/artists': (context) => ArtistLineupPage(),
-        '/schedule': (context) => SchedulePage(),
-        '/onboarding': (context) => const OnboardingFestivalSelectPage(),
-      },
-      theme: theme.dark(),
+    return UpgradeAlert(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const HomePage(),
+          '/event-change': (context) => const OnboardingFestivalSelectPage(),
+          '/z8-events': (context) => EventsPage(),
+          '/z8-about': (context) => AboutPage(),
+          '/know-god': (context) => KnowGodPage(),
+          '/resources': (context) => ResourcesPage(),
+          '/faq': (context) => FAQPage(),
+          '/map': (context) => const MapPage(),
+          '/sponsors': (context) => SponsorPage(),
+          '/artists': (context) => ArtistLineupPage(),
+          '/schedule': (context) => SchedulePage(),
+          '/onboarding': (context) => const OnboardingFestivalSelectPage(),
+        },
+        theme: theme.dark(),
+      ),
     );
   }
 }
