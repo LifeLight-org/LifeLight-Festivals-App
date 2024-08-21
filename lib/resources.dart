@@ -177,7 +177,6 @@ Widget _buildSectionContent(String content) {
       style: TextStyle(
         fontSize: 16, // Increase the font size
         color: Colors.white, // Change the color of the content
-        fontStyle: FontStyle.italic, // Make the content italic
       ),
     ),
   );

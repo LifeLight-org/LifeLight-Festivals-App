@@ -150,7 +150,7 @@ class _HomePageState extends State<HomePage> {
     final prefs = await SharedPreferences.getInstance();
     final homeEventSelected = prefs.getBool('homeEventSelected') ?? false;
     _selectedFestivalId = prefs.getInt('selectedFestivalId')?.toString();
-    _selectedFestivalSubHeading = prefs.getString('subHeading')!;
+    _selectedFestivalSubHeading = prefs.getString('subHeading') ?? '';
 
     if (!homeEventSelected) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -391,7 +391,7 @@ class _HomePageState extends State<HomePage> {
                                             Text(
                                               _buttonConfig[index]['label']!,
                                               style: TextStyle(
-                                                  fontSize: 16.0,
+                                                  fontSize: 15.0,
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors
                                                       .black), // Text color
@@ -413,7 +413,7 @@ class _HomePageState extends State<HomePage> {
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.only(bottom: 50.0, left: 20.0, right: 20.0),
                     child: GestureDetector(
                       onTap: () async {
                         final url = _ConnectCardData[

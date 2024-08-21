@@ -368,14 +368,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.2.0"
-  json_theme:
-    dependency: "direct main"
-    description:
-      name: json_theme
-      sha256: "5e70afe87fbe8519abaa4e4131a1405b567353e1b9074d97a62043e5fced018e"
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.5.0+1"
   json_theme_annotation:
     dependency: transitive
     description:
