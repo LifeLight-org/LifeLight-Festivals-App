@@ -15,7 +15,6 @@ dependencies:
   flutter_svg: ^2.0.10+1
   font_awesome_flutter: ^10.7.0
   intl: ^0.19.0
-  json_theme: ^6.4.1
   shared_preferences: ^2.3.1
   supabase_flutter: ^2.6.0
   youtube_player_flutter: ^9.0.3

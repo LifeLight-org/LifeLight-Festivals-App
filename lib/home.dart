@@ -443,7 +443,7 @@ class _HomePageState extends State<HomePage> {
                                               _buttonConfig[index]['label']!,
                                               style: TextStyle(
                                                   fontSize: 16.0,
-                                                  fontWeight: FontWeight.w900,
+                                                  fontWeight: FontWeight.bold,
                                                   color: Colors
                                                       .black), // Text color
                                             ),
@@ -464,7 +464,7 @@ class _HomePageState extends State<HomePage> {
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 16.0, left: 16.00),
+                    padding: const EdgeInsets.all(16.0),
                     child: GestureDetector(
                       onTap: () async {
                         final url = _ConnectCardData[
