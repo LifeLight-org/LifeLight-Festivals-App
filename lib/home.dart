@@ -160,7 +160,8 @@ class _HomePageState extends State<HomePage> {
     try {
       final response = await Supabase.instance.client
           .from('festivals')
-          .select('countdown_message, after_countdown_message, show_countdown_after_message_date, countdown_date')
+          .select(
+              'countdown_message, after_countdown_message, show_countdown_after_message_date, countdown_date')
           .eq('id', _selectedFestivalId!)
           .single();
       print(response);
@@ -338,12 +339,16 @@ class _HomePageState extends State<HomePage> {
                             overflow: TextOverflow
                                 .ellipsis, // Adds an ellipsis if the text still overflows
                           ),
-                        if (_CountdownData['countdown_date'] != null)
-                        Countdown(
-                          targetDate: DateTime.parse(_CountdownData['countdown_date']),
-                          showCountdownAfterMessageDate: DateTime.parse(_CountdownData['show_countdown_after_message_date']),
-                          afterCountdownMessage: _CountdownData['after_countdown_message'],
-                        ),
+                          if (_CountdownData['countdown_date'] != null)
+                            Countdown(
+                              targetDate: DateTime.parse(
+                                  _CountdownData['countdown_date']),
+                              showCountdownAfterMessageDate: DateTime.parse(
+                                  _CountdownData[
+                                      'show_countdown_after_message_date']),
+                              afterCountdownMessage:
+                                  _CountdownData['after_countdown_message'],
+                            ),
                           SizedBox(height: 20),
                           Container(
                             child: Center(
@@ -439,13 +444,13 @@ class _HomePageState extends State<HomePage> {
                                             SizedBox(
                                                 height:
                                                     8.0), // Space between icon and text
-                                            Text(
+                                            AutoSizeText(
                                               _buttonConfig[index]['label']!,
                                               style: TextStyle(
                                                   fontSize: 16.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors
-                                                      .black), // Text color
+                                                  fontWeight: FontWeight.w900,
+                                                  color: Colors.black),
+                                              maxLines: 1,
                                             ),
                                           ],
                                         ),
@@ -461,50 +466,53 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: GestureDetector(
-                      onTap: () async {
-                        final url = _ConnectCardData[
-                            'connect_card_url']; // Replace with your URL
-                        final ChromeSafariBrowser browser =
-                            ChromeSafariBrowser();
-                        await browser.open(
-                          url: WebUri(url),
-                          options: ChromeSafariBrowserClassOptions(
-                            android: AndroidChromeCustomTabsOptions(
-                              addDefaultShareMenuItem: false,
-                            ),
-                            ios: IOSSafariOptions(
-                              barCollapsingEnabled: true,
-                            ),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        height: 70,
-                        padding: EdgeInsets.symmetric(vertical: 16.0),
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 255, 208, 0),
-                          borderRadius: BorderRadius.circular(0),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'CONNECT CARD',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+Stack(
+  children: [
+    // Other widgets in your layout
+    Align(
+      alignment: Alignment(0.0, 0.9),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: GestureDetector(
+          onTap: () async {
+            final url = _ConnectCardData['connect_card_url']; // Replace with your URL
+            final ChromeSafariBrowser browser = ChromeSafariBrowser();
+            await browser.open(
+              url: WebUri(url),
+              options: ChromeSafariBrowserClassOptions(
+                android: AndroidChromeCustomTabsOptions(
+                  addDefaultShareMenuItem: false,
                 ),
+                ios: IOSSafariOptions(
+                  barCollapsingEnabled: true,
+                ),
+              ),
+            );
+          },
+          child: Container(
+            width: double.infinity,
+            height: 70,
+            padding: EdgeInsets.symmetric(vertical: 16.0),
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 255, 208, 0),
+              borderRadius: BorderRadius.circular(0),
+            ),
+            child: Center(
+              child: Text(
+                'CONNECT CARD',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  ],
+),
               ],
             ),
     );
