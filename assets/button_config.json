@@ -1,0 +1,153 @@
+{
+    "3": [
+        {
+            "icon": "schedule",
+            "label": "EVENTS",
+            "route": "/z8-events",
+            "type": "route"
+        },
+        {
+            "icon": "about",
+            "label": "ABOUT",
+            "route": "/z8-about",
+            "type": "route"
+        },
+        {
+            "icon": "fa_pray",
+            "label": "KNOW GOD",
+            "route": "/know-god",
+            "type": "route"
+        },
+        {
+            "icon": "resouces",
+            "label": "RESOURCES",
+            "route": "/resources",
+            "type": "route"
+        },
+        {
+            "icon": "donate",
+            "label": "DONATE",
+            "type": "donate"
+        },
+        {
+            "icon": "fa_follow_us",
+            "label": "FOLLOW US",
+            "route": "https://bio.site/Z8MOVEMENT",
+            "type": "url"
+        },
+        {
+            "icon": "faq",
+            "label": "FAQ",
+            "route": "/faq",
+            "type": "route"
+        }
+    ],
+    "1": [
+        {
+            "icon": "map",
+            "label": "MAP",
+            "route": "/map",
+            "type": "route"
+        },
+        {
+            "icon": "artists",
+            "label": "ARTISTS",
+            "route": "/artists",
+            "type": "route"
+        },
+        {
+            "icon": "schedule",
+            "label": "SCHEDULE",
+            "route": "/schedule",
+            "type": "route"
+        },
+        {
+            "icon": "sponsors",
+            "label": "SPONSORS",
+            "route": "/sponsors",
+            "type": "route"
+        },
+        {
+            "icon": "faq",
+            "label": "FAQ",
+            "route": "/faq",
+            "type": "route"
+        },
+        {
+            "icon": "donate",
+            "label": "DONATE",
+            "type": "donate"
+        },
+        {
+            "icon": "fa_pray",
+            "label": "KNOW GOD",
+            "route": "/know-god",
+            "type": "route"
+        },
+        {
+            "icon": "resouces",
+            "label": "RESOURCES",
+            "route": "/resources",
+            "type": "route"
+        },
+        {
+            "icon": "impact",
+            "label": "IMPACT",
+            "type": "impact"
+        }
+    ],
+    "2": [
+        {
+            "icon": "map",
+            "label": "MAP",
+            "route": "/map",
+            "type": "route"
+        },
+        {
+            "icon": "artists",
+            "label": "ARTISTS",
+            "route": "/artists",
+            "type": "route"
+        },
+        {
+            "icon": "schedule",
+            "label": "SCHEDULE",
+            "route": "/schedule",
+            "type": "route"
+        },
+        {
+            "icon": "sponsors",
+            "label": "SPONSORS",
+            "route": "/sponsors",
+            "type": "route"
+        },
+        {
+            "icon": "faq",
+            "label": "FAQ",
+            "route": "/faq",
+            "type": "route"
+        },
+        {
+            "icon": "donate",
+            "label": "DONATE",
+            "type": "donate"
+        },
+        {
+            "icon": "fa_pray",
+            "label": "KNOW GOD",
+            "route": "/know-god",
+            "type": "route"
+        },
+        {
+            "icon": "resouces",
+            "label": "RESOURCES",
+            "route": "/resources",
+            "type": "route"
+        },
+        {
+            "icon": "impact",
+            "label": "IMPACT",
+            "type": "impact"
+        }
+    ]
+}
