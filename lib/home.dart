@@ -307,12 +307,12 @@ class _HomePageState extends State<HomePage> {
                             padding: const EdgeInsets.all(1.0),
                             child: CachedNetworkImage(
                               imageUrl: _images['light_logo'],
-                              height: MediaQuery.of(context).size.shortestSide > 600
+                              height:
+                                  MediaQuery.of(context).size.shortestSide > 600
                                       ? 210
-                                      : 140, 
+                                      : 140,
                               fit: BoxFit.cover,
-                              placeholder: (context, url) =>
-                                  Expanded(child: Text("")),
+                              placeholder: (context, url) => Container(),
                               errorWidget: (context, url, error) =>
                                   Icon(Icons.error),
                             ),
@@ -353,6 +353,14 @@ class _HomePageState extends State<HomePage> {
                                       'show_countdown_after_message_date']),
                               afterCountdownMessage:
                                   _CountdownData['after_countdown_message'],
+                            ),
+                          if (_CountdownData['countdown_date'] == null)
+                            SizedBox(
+                              height: MediaQuery.of(context).size.width > 670
+                                  ? 130
+                                  : MediaQuery.of(context).size.width > 540
+                                      ? 120
+                                      : 70,
                             ),
                           SizedBox(height: 20),
                           Container(
@@ -480,61 +488,75 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-Stack(
-  children: [
-    // Other widgets in your layout
-    Align(
-      alignment: MediaQuery.of(context).size.shortestSide > 600 
-    ? Alignment(0.0, 1.0) // Keep alignment as is on iPad
-    : MediaQuery.of(context).size.shortestSide > 420 
-        ? Alignment(0.0, 0.9) // Move up on 6.7-inch screens
-        : Alignment(0.0, 1.0), // Default alignment on other devices
-      child: Padding(
-        padding: MediaQuery.of(context).size.shortestSide > 600 
-            ? const EdgeInsets.all(15.0) // Larger padding on iPad
-            : MediaQuery.of(context).size.shortestSide > 430 
-                ? const EdgeInsets.all(50.0) // Move up on 6.7-inch screens
-                : const EdgeInsets.all(2.0), // Default padding on other devices
-        child: GestureDetector(
-          onTap: () async {
-            final url = _ConnectCardData['connect_card_url']; // Replace with your URL
-            final ChromeSafariBrowser browser = ChromeSafariBrowser();
-            await browser.open(
-              url: WebUri(url),
-              options: ChromeSafariBrowserClassOptions(
-                android: AndroidChromeCustomTabsOptions(
-                  addDefaultShareMenuItem: false,
-                ),
-                ios: IOSSafariOptions(
-                  barCollapsingEnabled: true,
-                ),
-              ),
-            );
-          },
-          child: Container(
-            width: MediaQuery.of(context).size.width / 1.2,
-            height: MediaQuery.of(context).size.shortestSide > 600 ? 150 : 70, // Larger height on iPad
-            padding: EdgeInsets.symmetric(vertical: 0.0),
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 255, 208, 0),
-              borderRadius: BorderRadius.circular(0),
-            ),
-            child: Center(
-              child: Text(
-                'CONNECT CARD',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: MediaQuery.of(context).size.shortestSide > 600 ? 24.0 : 16.0, // Larger font size on iPad
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    ),
-  ],
-)
+                Stack(
+                  children: [
+                    // Other widgets in your layout
+                    Align(
+                      alignment: MediaQuery.of(context).size.shortestSide > 600
+                          ? Alignment(0.0, 1.0) // Keep alignment as is on iPad
+                          : MediaQuery.of(context).size.shortestSide > 420
+                              ? Alignment(
+                                  0.0, 0.9) // Move up on 6.7-inch screens
+                              : Alignment(0.0,
+                                  1.0), // Default alignment on other devices
+                      child: Padding(
+                        padding: MediaQuery.of(context).size.shortestSide > 600
+                            ? const EdgeInsets.all(
+                                15.0) // Larger padding on iPad
+                            : MediaQuery.of(context).size.shortestSide > 430
+                                ? const EdgeInsets.all(
+                                    50.0) // Move up on 6.7-inch screens
+                                : const EdgeInsets.all(
+                                    2.0), // Default padding on other devices
+                        child: GestureDetector(
+                          onTap: () async {
+                            final url = _ConnectCardData[
+                                'connect_card_url']; // Replace with your URL
+                            final ChromeSafariBrowser browser =
+                                ChromeSafariBrowser();
+                            await browser.open(
+                              url: WebUri(url),
+                              options: ChromeSafariBrowserClassOptions(
+                                android: AndroidChromeCustomTabsOptions(
+                                  addDefaultShareMenuItem: false,
+                                ),
+                                ios: IOSSafariOptions(
+                                  barCollapsingEnabled: true,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width / 1.2,
+                            height:
+                                MediaQuery.of(context).size.shortestSide > 600
+                                    ? 150
+                                    : 70, // Larger height on iPad
+                            padding: EdgeInsets.symmetric(vertical: 0.0),
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 255, 208, 0),
+                              borderRadius: BorderRadius.circular(0),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'CONNECT CARD',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize:
+                                      MediaQuery.of(context).size.shortestSide >
+                                              600
+                                          ? 24.0
+                                          : 16.0, // Larger font size on iPad
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
     );
@@ -566,6 +588,10 @@ Stack(
         return Icons.star;
       case 'impact':
         return Icons.currency_exchange;
+      case 'fa_instagram':
+        return FontAwesomeIcons.instagram;
+      case 'fa_facebook':
+        return FontAwesomeIcons.facebook;
       default:
         return Icons.star;
     }

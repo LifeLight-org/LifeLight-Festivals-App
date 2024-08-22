@@ -53,7 +53,7 @@ class CountdownState extends State<Countdown> {
 
     // Display nothing while loading
     if (_duration == const Duration()) {
-      return SizedBox(height: 30.00);
+      return SizedBox(height: 65.00);
     }
 
     return Column(

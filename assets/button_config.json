@@ -30,16 +30,22 @@
             "type": "donate"
         },
         {
-            "icon": "fa_follow_us",
-            "label": "FOLLOW US",
-            "route": "https://bio.site/Z8MOVEMENT",
-            "type": "url"
-        },
-        {
             "icon": "faq",
             "label": "FAQ",
             "route": "/faq",
             "type": "route"
+        },
+        {
+            "icon": "fa_instagram",
+            "label": "INSTAGRAM",
+            "route": "https://www.instagram.com/z8initiativesf",
+            "type": "url"
+        },
+        {
+            "icon": "fa_facebook",
+            "label": "FACEBOOK",
+            "route": "https://www.facebook.com/z8initiative",
+            "type": "url"
         }
     ],
     "1": [
