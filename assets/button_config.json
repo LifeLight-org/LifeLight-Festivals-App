@@ -46,6 +46,12 @@
             "label": "FACEBOOK",
             "route": "https://www.facebook.com/z8initiative",
             "type": "url"
+        },
+        {
+            "icon": "contact",
+            "label": "QUESTIONS",
+            "route": "/contact-form",
+            "type": "route"
         }
     ],
     "1": [

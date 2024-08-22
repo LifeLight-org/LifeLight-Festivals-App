@@ -27,6 +27,7 @@ class _HomePageState extends State<HomePage> {
   Map<String, dynamic> _ImpactData = {};
   Map<String, dynamic> _ConnectCardData = {};
   Map<String, dynamic> _CountdownData = {};
+  Map<String, dynamic> _ContactFormData = {};
   String _selectedFestivalSubHeading = ''; // Define the variable here
 
   @override
@@ -154,6 +155,42 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> _fetchContactFormData() async {
+    if (_selectedFestivalId == null) return;
+    final sharedPrefs = await SharedPreferences.getInstance();
+
+    try {
+      final response = await Supabase.instance.client
+          .from('festivals')
+          .select('contact_form_from, contact_form_from_email, contact_form_to, contact_form_subject')
+          .eq('id', _selectedFestivalId!)
+          .single();
+      if (response != null) {
+        setState(() {
+          _ContactFormData = response as Map<String, dynamic>;
+          print(_ContactFormData);
+          sharedPrefs.setString('contactFormFrom', response['contact_form_from']);
+          sharedPrefs.setString('contactFormFromEmail', response['contact_form_from_email']);
+          sharedPrefs.setString('contactFormTo', response['contact_form_to']);
+          sharedPrefs.setString('contactFormSubject', response['contact_form_subject']);
+          _isLoading = false;
+        });
+      } else {
+        // Handle error
+        setState(() {
+          _isLoading = false;
+        });
+        print('Error: No data found for the selected festival.');
+      }
+    } catch (error) {
+      // Handle error
+      setState(() {
+        _isLoading = false;
+      });
+      print('Error fetching Contact Form URL: $error');
+    }
+  }
+
   Future<void> _fetchCountdown() async {
     if (_selectedFestivalId == null) return;
 
@@ -207,6 +244,7 @@ class _HomePageState extends State<HomePage> {
       _fetchImpactData();
       _fetchConnectCardUrl();
       _fetchCountdown();
+      _fetchContactFormData();
     }
   }
 

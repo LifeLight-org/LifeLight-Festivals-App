@@ -12,6 +12,7 @@ import 'package:lifelight_festivals/festivals-pages/schedule.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:lifelight_festivals/onboarding_festival_select.dart';
 import 'package:lifelight_festivals/home.dart';
+import 'package:lifelight_festivals/contact_form.dart';
 import 'util.dart';
 import 'theme.dart';
 
@@ -64,6 +65,7 @@ class MyApp extends StatelessWidget {
           '/schedule': (context) => SchedulePage(),
           '/onboarding': (context) => const OnboardingFestivalSelectPage(),
           '/settings': (context) => SettingsPage(),
+          '/contact-form': (context) => ContactForm(),
         },
         theme: theme.dark(),
       ),

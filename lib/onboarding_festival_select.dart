@@ -80,14 +80,15 @@ class FestivalCard extends StatelessWidget {
   final String festivalName;
   final String lightLogoUrl;
   final bool isEvent;
-  final String? sub_heading; // Make sub_heading nullable
+  final String? sub_heading;
 
   const FestivalCard({
       required this.id,
       required this.festivalName,
       required this.lightLogoUrl,
       required this.isEvent,
-      this.sub_heading, // Nullable sub_heading
+      this.sub_heading,
+
       super.key,
   });
 
