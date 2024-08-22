@@ -304,10 +304,12 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.all(1.0),
                             child: CachedNetworkImage(
                               imageUrl: _images['light_logo'],
-                              height: 130,
+                              height: MediaQuery.of(context).size.shortestSide > 600
+                                      ? 210
+                                      : 140, 
                               fit: BoxFit.cover,
                               placeholder: (context, url) =>
                                   Expanded(child: Text("")),
@@ -319,7 +321,10 @@ class _HomePageState extends State<HomePage> {
                             _selectedFestivalSubHeading,
                             style: TextStyle(
                               fontFamily: 'HelveticaNeueLT',
-                              fontSize: 20,
+                              fontSize:
+                                  MediaQuery.of(context).size.shortestSide > 600
+                                      ? 30
+                                      : 20, // Larger font size on iPad
                               letterSpacing: -2.0,
                               foreground: Paint()
                                 ..style = PaintingStyle.stroke
@@ -422,9 +427,18 @@ class _HomePageState extends State<HomePage> {
                                         }
                                       },
                                       child: Container(
-                                        width: 100, // Set the width
-                                        height:
-                                            100, // Set the height to the same value to make it a square
+                                        width: MediaQuery.of(context)
+                                                    .size
+                                                    .shortestSide >
+                                                600
+                                            ? 200
+                                            : 100, // Set the width larger on iPad
+                                        height: MediaQuery.of(context)
+                                                    .size
+                                                    .shortestSide >
+                                                600
+                                            ? 200
+                                            : 100, // Set the height larger on iPad
                                         decoration: BoxDecoration(
                                           color: Color.fromARGB(255, 255, 208,
                                               0), // Background color
@@ -470,9 +484,17 @@ Stack(
   children: [
     // Other widgets in your layout
     Align(
-      alignment: Alignment(0.0, 0.9),
+      alignment: MediaQuery.of(context).size.shortestSide > 600 
+    ? Alignment(0.0, 1.0) // Keep alignment as is on iPad
+    : MediaQuery.of(context).size.shortestSide > 420 
+        ? Alignment(0.0, 0.9) // Move up on 6.7-inch screens
+        : Alignment(0.0, 1.0), // Default alignment on other devices
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: MediaQuery.of(context).size.shortestSide > 600 
+            ? const EdgeInsets.all(15.0) // Larger padding on iPad
+            : MediaQuery.of(context).size.shortestSide > 430 
+                ? const EdgeInsets.all(50.0) // Move up on 6.7-inch screens
+                : const EdgeInsets.all(2.0), // Default padding on other devices
         child: GestureDetector(
           onTap: () async {
             final url = _ConnectCardData['connect_card_url']; // Replace with your URL
@@ -490,9 +512,9 @@ Stack(
             );
           },
           child: Container(
-            width: double.infinity,
-            height: 70,
-            padding: EdgeInsets.symmetric(vertical: 16.0),
+            width: MediaQuery.of(context).size.width / 1.2,
+            height: MediaQuery.of(context).size.shortestSide > 600 ? 150 : 70, // Larger height on iPad
+            padding: EdgeInsets.symmetric(vertical: 0.0),
             decoration: BoxDecoration(
               color: Color.fromARGB(255, 255, 208, 0),
               borderRadius: BorderRadius.circular(0),
@@ -502,7 +524,7 @@ Stack(
                 'CONNECT CARD',
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 16.0,
+                  fontSize: MediaQuery.of(context).size.shortestSide > 600 ? 24.0 : 16.0, // Larger font size on iPad
                   fontWeight: FontWeight.w900,
                 ),
               ),
@@ -512,7 +534,7 @@ Stack(
       ),
     ),
   ],
-),
+)
               ],
             ),
     );

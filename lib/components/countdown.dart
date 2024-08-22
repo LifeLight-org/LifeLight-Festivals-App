@@ -49,6 +49,7 @@ class CountdownState extends State<Countdown> {
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
+    final bool isTablet = MediaQuery.of(context).size.shortestSide > 600;
 
     // Display nothing while loading
     if (_duration == const Duration()) {
@@ -63,11 +64,17 @@ class CountdownState extends State<Countdown> {
                 now.isAfter(widget.showCountdownAfterMessageDate)
             ? Text(
                 widget.afterCountdownMessage,
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: isTablet ? 36 : 24, // Larger font size on iPad
+                  fontWeight: FontWeight.bold,
+                ),
               )
-            : const Text(
+            : Text(
                 'Days To Go:',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: isTablet ? 36 : 24, // Larger font size on iPad
+                  fontWeight: FontWeight.bold,
+                ),
               ),
         const SizedBox(height: 8),
         _duration.isNegative &&
@@ -75,7 +82,10 @@ class CountdownState extends State<Countdown> {
             ? const SizedBox.shrink()
             : Text(
                 '${_duration.inDays} days ${_duration.inHours.remainder(24)} hours ${_duration.inMinutes.remainder(60)} minutes ${_duration.inSeconds.remainder(60)} seconds',
-                style: const TextStyle(fontSize: 16),
+                style: TextStyle(
+                  fontSize: isTablet ? 24 : 16, // Larger font size on iPad
+                  fontWeight: FontWeight.bold,
+                ),
               ),
       ],
     );
