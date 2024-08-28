@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lifelight_festivals/z8_events.dart';
@@ -21,9 +22,11 @@ class EventDetailPage extends StatelessWidget {
             if (event.image != null && event.image!.isNotEmpty)
               AspectRatio(
                 aspectRatio: 16 / 9,
-                child: Image.network(
-                  event.image!,
+                child: CachedNetworkImage(
+                  imageUrl: event.image!,
                   fit: BoxFit.cover,
+                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
               ),
             const SizedBox(height: 16),

@@ -228,13 +228,17 @@ class ArtistPopup extends StatelessWidget {
                           ),
                         ),
                         ClipRRect(
-                          child: Image.network(
-                            imageUrl,
+                          child: CachedNetworkImage(
+                            imageUrl: imageUrl,
                             width: MediaQuery.of(context).size.width *
-                                0.3, // 40% of screen width
+                                0.3, // 30% of screen width
                             height: MediaQuery.of(context).size.width *
                                 0.3, // Same as width to maintain aspect ratio
                             fit: BoxFit.cover,
+                            placeholder: (context, url) =>
+                                Center(child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.error),
                           ),
                         ),
                       ],

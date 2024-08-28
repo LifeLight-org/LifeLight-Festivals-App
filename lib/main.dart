@@ -1,74 +1,92 @@
 import 'package:flutter/material.dart';
-import 'package:lifelight_festivals/faq.dart';
-import 'package:lifelight_festivals/festivals-pages/artist.dart';
-import 'package:lifelight_festivals/festivals-pages/map.dart';
-import 'package:lifelight_festivals/festivals-pages/sponsor.dart';
-import 'package:lifelight_festivals/know_god.dart';
-import 'package:lifelight_festivals/resources.dart';
-import 'package:lifelight_festivals/settings.dart';
-import 'package:lifelight_festivals/z8_events.dart';
-import 'package:lifelight_festivals/z8_about.dart';
-import 'package:lifelight_festivals/festivals-pages/schedule.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:lifelight_festivals/onboarding_festival_select.dart';
-import 'package:lifelight_festivals/home.dart';
-import 'package:lifelight_festivals/contact_form.dart';
-import 'util.dart';
-import 'theme.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:upgrader/upgrader.dart';
 
-Future<void> main() async {
+import 'onboarding_festival_select.dart';
+import 'home.dart';
+import 'faq.dart';
+import 'festivals-pages/artist.dart';
+import 'festivals-pages/map.dart';
+import 'festivals-pages/sponsor.dart';
+import 'know_god.dart';
+import 'resources.dart';
+import 'settings.dart';
+import 'z8_events.dart';
+import 'z8_about.dart';
+import 'festivals-pages/schedule.dart';
+import 'contact_form.dart';
+import 'theme.dart'; // Import the theme file
+
+void main() async {
+  await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
-  await Supabase.initialize(
-    url: 'https://xsssdjpayiloazwsamfu.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhzc3NkanBheWlsb2F6d3NhbWZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM3NDYxMTMsImV4cCI6MjAzOTMyMjExM30.p0G8rKz7RDUTeCw7sxofaxYD7rBV1PpvbaW5QFHk37U',
-  );
 
   OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-  OneSignal.initialize("ebe57ffe-e90d-4aa4-9c58-3d8f93c568f2");
-
-  // The promptForPushNotificationsWithUserResponse function will show the iOS or Android push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission
+  OneSignal.initialize(dotenv.env['ONESIGNAL_APP_ID']!);
   OneSignal.Notifications.requestPermission(true);
 
-  runApp(const MyApp());
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+  );
+
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: appTheme, // Use the theme from theme.dart
+      home: UpgradeAlert(
+        child: MyApp(),
+      ),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  Future<bool> _checkOnboardingStatus() async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    return sharedPreferences.getBool('homeEventSelected') ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final brightness = View.of(context).platformDispatcher.platformBrightness;
-
-    // Use with Google Fonts package to use downloadable fonts
-    TextTheme textTheme = createTextTheme(context, "Raleway", "Raleway");
-
-    MaterialTheme theme = MaterialTheme(textTheme);
-    return UpgradeAlert(
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        initialRoute: '/',
-        routes: {
-          '/': (context) => const HomePage(),
-          '/event-change': (context) => const OnboardingFestivalSelectPage(),
-          '/z8-events': (context) => EventsPage(),
-          '/z8-about': (context) => AboutPage(),
-          '/know-god': (context) => KnowGodPage(),
-          '/resources': (context) => ResourcesPage(),
-          '/faq': (context) => FAQPage(),
-          '/map': (context) => const MapPage(),
-          '/sponsors': (context) => SponsorPage(),
-          '/artists': (context) => ArtistLineupPage(),
-          '/schedule': (context) => SchedulePage(),
-          '/onboarding': (context) => const OnboardingFestivalSelectPage(),
-          '/settings': (context) => SettingsPage(),
-          '/contact-form': (context) => ContactForm(),
-        },
-        theme: theme.dark(),
-      ),
+    return FutureBuilder<bool>(
+      future: _checkOnboardingStatus(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return const Center(child: Text('Error loading app'));
+        } else {
+          final hasOnboarded = snapshot.data ?? false;
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: appTheme, // Use the theme from theme.dart
+            initialRoute: '/',
+            routes: {
+              '/': (context) => hasOnboarded ? const HomePage() : const OnboardingFestivalSelectPage(),
+              '/home': (context) => const HomePage(),
+              '/event-change': (context) => const OnboardingFestivalSelectPage(),
+              '/z8-events': (context) => EventsPage(),
+              '/z8-about': (context) => AboutPage(),
+              '/know-god': (context) => KnowGodPage(),
+              '/resources': (context) => ResourcesPage(),
+              '/faq': (context) => FAQPage(),
+              '/map': (context) => const MapPage(),
+              '/sponsors': (context) => SponsorPage(),
+              '/artists': (context) => ArtistLineupPage(),
+              '/schedule': (context) => SchedulePage(),
+              '/onboarding': (context) => const OnboardingFestivalSelectPage(),
+              '/settings': (context) => SettingsPage(),
+              '/contact-form': (context) => ContactForm(),
+            },
+          );
+        }
+      },
     );
   }
 }

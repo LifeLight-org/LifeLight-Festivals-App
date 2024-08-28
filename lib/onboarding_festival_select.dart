@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -83,13 +84,12 @@ class FestivalCard extends StatelessWidget {
   final String? sub_heading;
 
   const FestivalCard({
-      required this.id,
-      required this.festivalName,
-      required this.lightLogoUrl,
-      required this.isEvent,
-      this.sub_heading,
-
-      super.key,
+    required this.id,
+    required this.festivalName,
+    required this.lightLogoUrl,
+    required this.isEvent,
+    this.sub_heading,
+    super.key,
   });
 
   @override
@@ -109,7 +109,7 @@ class FestivalCard extends StatelessWidget {
           await prefs.setString('subHeading', sub_heading ?? '');
           OneSignal.User.addTagWithKey("MainSelectedFestival", id);
           print('Selected Festival ID: $id');
-          Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false);
+          Navigator.pushReplacementNamed(context, '/home');
         },
         child: Padding(
           padding:
@@ -118,10 +118,12 @@ class FestivalCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.network(
-                  lightLogoUrl,
+                CachedNetworkImage(
+                  imageUrl: lightLogoUrl,
                   width: 200,
                   height: 150,
+                  placeholder: (context, url) => Center(child: (CircularProgressIndicator())),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
                 SizedBox(height: 10),
                 Text(

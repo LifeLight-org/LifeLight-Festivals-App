@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -144,15 +145,21 @@ class SchedulePage extends StatelessWidget {
               ],
             ),
             ListTile(
-              title: Text(item['title']),
+              title: Text(item['title'],
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               subtitle: Text('${item['festival_locations']['location']}'),
               leading: ClipRRect(
                 borderRadius: BorderRadius.circular(5),
-                child: Image.network(
-                  item['image_url'],
+                child: CachedNetworkImage(
+                  imageUrl: item['image_url'],
                   fit: BoxFit.cover,
                   width: 50,
                   height: 50,
+                  placeholder: (context, url) => Center(
+                    child: CircularProgressIndicator(),
+                  ), // Optional placeholder
+                  errorWidget: (context, url, error) =>
+                      Icon(Icons.error), // Optional error widget
                 ),
               ),
             ),

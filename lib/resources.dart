@@ -130,7 +130,7 @@ class _ResourcesPageState extends State<ResourcesPage> {
                       ),
                     ),
                     child: ListTile(
-                      title: Text(partner.name),
+                      title: Text(partner.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[

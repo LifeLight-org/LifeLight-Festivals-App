@@ -3,13 +3,11 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:intl/intl.dart';
 import 'package:lifelight_festivals/components/countdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -33,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _checkHomeEventSelected();
+    _initializeHomePage();
   }
 
   Future<void> _fetchImages() async {
@@ -223,29 +221,18 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _checkHomeEventSelected() async {
+  Future<void> _initializeHomePage() async {
     final prefs = await SharedPreferences.getInstance();
-    final homeEventSelected = prefs.getBool('homeEventSelected') ?? false;
     _selectedFestivalId = prefs.getInt('selectedFestivalId')?.toString();
     _selectedFestivalSubHeading = prefs.getString('subHeading') ?? '';
 
-    if (!homeEventSelected) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/onboarding',
-          (Route<dynamic> route) => false,
-        );
-      });
-    } else {
-      await _fetchImages();
-      _loadButtonConfig();
-      _fetchDonateUrl();
-      _fetchImpactData();
-      _fetchConnectCardUrl();
-      _fetchCountdown();
-      _fetchContactFormData();
-    }
+    await _fetchImages();
+    _loadButtonConfig();
+    _fetchDonateUrl();
+    _fetchImpactData();
+    _fetchConnectCardUrl();
+    _fetchCountdown();
+    _fetchContactFormData();
   }
 
   Future<void> _loadButtonConfig() async {
@@ -274,7 +261,7 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Impact'),
+          title: Text('Impact', style: TextStyle(fontWeight: FontWeight.bold)),
           content: Text(_ImpactData['impact_message']),
           actions: <Widget>[
             TextButton(

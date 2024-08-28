@@ -16,7 +16,7 @@ class _KnowGodPageState extends State<KnowGodPage> {
   void initState() {
     super.initState();
     _controller1 = YoutubePlayerController(
-      initialVideoId: '98rFvI2yCWQ', // Replace with your first YouTube video ID
+      initialVideoId: 'hvtSrRIdjjs', // Replace with your first YouTube video ID
       flags: YoutubePlayerFlags(
         autoPlay: false,
         mute: false,
@@ -55,6 +55,7 @@ class _KnowGodPageState extends State<KnowGodPage> {
               style: TextStyle(
                 fontSize: 34,
                 color: Color(0xffFFD000), // Set the color of the text
+                fontWeight: FontWeight.bold, // Make the text bold
               ),
             ),
             SizedBox(height: 16.0), // Add some spacing

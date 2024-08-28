@@ -1,4 +1,4 @@
-import "package:flutter/material.dart";
+import 'package:flutter/material.dart';
 
 class MaterialTheme {
   final TextTheme textTheme;
@@ -115,3 +115,6 @@ class ColorFamily {
   final Color colorContainer;
   final Color onColorContainer;
 }
+
+// Define the appTheme using the MaterialTheme class
+final ThemeData appTheme = MaterialTheme(TextTheme()).dark();

@@ -139,7 +139,7 @@ class FAQItemState extends State<FAQItem> {
   Widget build(BuildContext context) {
     return Card(
       child: ExpansionTile(
-        title: Text(widget.question),
+        title: Text(widget.question, style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
         children: [
           Padding(
             padding: EdgeInsets.all(16.0),
